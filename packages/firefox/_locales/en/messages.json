@@ -6,7 +6,7 @@
     "message": "Resolves .iota names via IOTA JSON-RPC (iotax_iotaNamesLookup), optionally redirects to the configured website and shows records."
   },
   "popupTitle": {
-    "message": "IOTA Resolve"
+    "message": "IOTA Names Resolver"
   },
   "go": {
     "message": "Go"

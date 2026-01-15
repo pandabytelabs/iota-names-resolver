@@ -16,9 +16,3 @@ bash scripts/package.sh
 - Replace `assets/store/screenshot_*.png` placeholders with real screenshots.
 - Review `docs/PERMISSIONS.md` and ensure permissions match current behavior.
 - Ensure `store/*/PRIVACY.md` matches the current network behavior and settings.
-
-## Version
-Before tagging a release, bump the manifest version:
-```bash
-./scripts/bump_version.sh 0.2.1
-```
