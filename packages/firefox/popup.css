@@ -24,3 +24,6 @@ a { text-decoration:none; border:1px solid rgba(127,127,127,.35); padding:6px 8p
 .adv > summary { cursor: pointer; }
 .blk { margin-top: 8px; }
 .lbl { display:block; margin: 6px 0; opacity:.9; }
+
+/* Ensure hidden status box is not visible even if other CSS sets display */
+#advStatus[hidden]{display:none !important;}
