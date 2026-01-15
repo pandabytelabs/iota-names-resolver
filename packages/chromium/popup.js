@@ -112,8 +112,8 @@ async function go() {
 
 document.addEventListener("DOMContentLoaded", () => {
   
-function setAdvStatus(text) {
-  const el = document.getElementById("advStatus");
+function setAdvOut(text) {
+  const el = document.getElementById("advOut");
   if (!el) return;
   const t = (text || "").toString().trim();
   if (!t) {
