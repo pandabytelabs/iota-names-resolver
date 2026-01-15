@@ -6,7 +6,7 @@
     "message": "Löst .iota Namen über IOTA JSON-RPC (iotax_iotaNamesLookup) auf, leitet optional auf die hinterlegte Website weiter und zeigt Records an."
   },
   "popupTitle": {
-    "message": "IOTA Resolve"
+    "message": "IOTA Names Resolver"
   },
   "go": {
     "message": "Los"
