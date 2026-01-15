@@ -108,12 +108,12 @@
     "message": "Raw JSON"
   },
   "footerNote": {
-    "message": "Note: This is a local extension page. In Brave, entering foundation.iota without a scheme may be treated as search — use https://foundation.iota/ or the omnibox: iota foundation.iota."
+    "message": "Note: This is a local extension page. In Brave, entering example.iota without a scheme may be treated as search — use https://example.iota/ or the omnibox: iota example.iota."
   },
   "omniboxSuggestion": {
-    "message": "Resolve IOTA Name: %s (e.g. foundation.iota)"
+    "message": "Resolve IOTA Name: %s (e.g. example.iota)"
   },
   "namePlaceholder": {
-    "message": "foundation.iota"
+    "message": "example.iota"
   }
 }

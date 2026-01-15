@@ -111,5 +111,19 @@ async function go() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  load().catch((e) => setStatus(String(e?.message || e || "Failed to load")));
+  
+function setAdvStatus(text) {
+  const el = document.getElementById("advStatus");
+  if (!el) return;
+  const t = (text || "").toString().trim();
+  if (!t) {
+    el.textContent = "";
+    el.hidden = true;
+    return;
+  }
+  el.textContent = t;
+  el.hidden = false;
+}
+
+load().catch((e) => setStatus(String(e?.message || e || "Failed to load")));
 });
