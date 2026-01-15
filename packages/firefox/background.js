@@ -183,9 +183,9 @@ chrome.webNavigation.onBeforeNavigate.addListener(handleNavigation, {
 });
 
 // --- Omnibox integration ---
-// Usage: type "iota <name>" then Enter. Example: iota foundation.iota
+// Usage: type "iota <name>" then Enter. Example: iota example.iota
 chrome.omnibox.setDefaultSuggestion({
-  description: (chrome.i18n.getMessage("omniboxSuggestion", ["%s"]) || 'Resolve IOTA Name: %s (e.g. foundation.iota)').replace("%s", "<match>%s</match>")
+  description: (chrome.i18n.getMessage("omniboxSuggestion", ["%s"]) || 'Resolve IOTA Name: %s (e.g. example.iota)').replace("%s", "<match>%s</match>")
 });
 
 chrome.omnibox.onInputEntered.addListener(async (text, disposition) => {

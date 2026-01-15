@@ -8,4 +8,4 @@ Data stored:
 - RPC URL, network preset, UI preferences (auto-redirect, etc.)
 
 Data sent:
-- The entered hostname (e.g. foundation.iota) in the JSON-RPC request payload to the configured RPC endpoint.
+- The entered hostname (e.g. example.iota) in the JSON-RPC request payload to the configured RPC endpoint.
