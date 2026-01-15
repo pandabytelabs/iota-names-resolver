@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -21,22 +21,26 @@
     </label>
 
     <details class="adv">
-      <summary<span data-i18n="advanced">Advanced</span>/summary>
-      <div class="blk">
-        <label class="lbl" data-i18n="network">Network</label>
+      <summary><span data-i18n="advanced">Advanced</span></summary>
+
+      <div class="row3">
+        <label class="lbl" for="network" data-i18n="network">Network</label>
         <select id="network">
           <option value="mainnet">Mainnet</option>
           <option value="testnet">Testnet</option>
           <option value="devnet">Devnet</option>
           <option value="custom">Custom</option>
         </select>
+      </div>
 
-        <label class="lbl" data-i18n="rpcUrl">RPC URL</label>
-        <input id="rpcUrl" type="url" placeholder="https://api.mainnet.iota.cafe:443" />
-        <div class="row3">
-          <button id="saveRpc"<span data-i18n="save">Save</span>/button>
-          <span id="status" class="muted"></span>
-        </div>
+      <div class="row3">
+        <label class="lbl" for="rpcUrl" data-i18n="rpcUrl">RPC URL</label>
+        <input id="rpcUrl" type="text" spellcheck="false" />
+      </div>
+
+      <div class="row3">
+        <button id="saveRpc" class="btn" data-i18n="save">Save</button>
+        <span id="status" class="muted"></span>
       </div>
     </details>
 
@@ -46,6 +50,7 @@
       <a id="opts" href="options.html" target="_blank" rel="noreferrer" data-i18n="settings">Settings</a>
     </div>
   </main>
+
   <script src="i18n.js"></script>
   <script src="popup.js"></script>
 </body>

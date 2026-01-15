@@ -1,7 +1,5 @@
 const $ = (id) => document.getElementById(id);
 
-window.__i18n?.apply?.();
-
 const DEFAULTS = {
   network: "mainnet",
   rpcUrl: "https://api.mainnet.iota.cafe:443",
@@ -13,63 +11,105 @@ function presetRpcUrl(network) {
   return `https://api.${network}.iota.cafe:443`;
 }
 
+function setStatus(text) {
+  const el = $("out");
+  if (el) el.textContent = text || "";
+}
+
 async function load() {
+  // Apply i18n once the DOM exists.
+  window.__i18n?.apply?.();
+
   const stored = await chrome.storage.sync.get(DEFAULTS);
 
-  $("redirect").checked = !!stored.autoRedirect;
-  $("rpcUrl").value = stored.rpcUrl || DEFAULTS.rpcUrl;
-  $("network").value = stored.network || DEFAULTS.network;
+  const redirectEl = $("redirect");
+  const rpcEl = $("rpcUrl");
+  const netEl = $("network");
+  const goEl = $("go");
+  const nameEl = $("name");
+  const saveEl = $("saveRpc");
 
-  $("network").addEventListener("change", () => {
-    const p = presetRpcUrl($("network").value);
-    if (p) $("rpcUrl").value = p;
-  });
-
-  $("go").addEventListener("click", go);
-  $("name").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") go();
-  });
-
-  $("saveRpc").addEventListener("click", saveAll);
-}
-
-async function saveAll() {
-  const rpcUrl = ($("rpcUrl").value || "").trim() || DEFAULTS.rpcUrl;
-  const network = $("network").value || DEFAULTS.network;
-
-  await chrome.storage.sync.set({
-    rpcUrl,
-    network,
-    autoRedirect: $("redirect").checked,
-  });
-
-  $("status").textContent = chrome.i18n.getMessage("saved") || "Saved.";
-  setTimeout(() => ($("status").textContent = ""), 1200);
-}
-
-async function go() {
-  const raw = ($("name").value || "").trim();
-  if (!raw) return;
-
-  const name = raw.toLowerCase().endsWith(".iota") ? raw : `${raw}.iota`;
-
-  await saveAll();
-
-  $("out").textContent = chrome.i18n.getMessage("resolving") || "Resolving…";
-  const res = await chrome.runtime.sendMessage({ type: "resolveNow", name });
-
-  if (!res?.ok) {
-    $("out").textContent = res?.error || chrome.i18n.getMessage("unknownError") || "Unknown error";
+  if (!redirectEl || !rpcEl || !netEl || !goEl || !nameEl || !saveEl) {
+    setStatus("Popup UI is missing required elements. Please reload the extension.");
     return;
   }
 
-  $("out").textContent = JSON.stringify(res.payload, null, 2);
+  redirectEl.checked = !!stored.autoRedirect;
+  rpcEl.value = stored.rpcUrl || DEFAULTS.rpcUrl;
+  netEl.value = stored.network || DEFAULTS.network;
 
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (tab?.id) {
-    await chrome.tabs.update(tab.id, { url: `https://${name}/` });
-    window.close();
+  netEl.addEventListener("change", () => {
+    const p = presetRpcUrl(netEl.value);
+    if (p) rpcEl.value = p;
+  });
+
+  goEl.addEventListener("click", go);
+  nameEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") go();
+  });
+
+  saveEl.addEventListener("click", saveAll);
+}
+
+async function saveAll() {
+  const rpcUrl = ($("rpcUrl")?.value || "").trim() || DEFAULTS.rpcUrl;
+  const network = $("network")?.value || DEFAULTS.network;
+  const autoRedirect = !!$("redirect")?.checked;
+
+  await chrome.storage.sync.set({ rpcUrl, network, autoRedirect });
+
+  const status = $("status");
+  if (status) {
+    status.textContent = chrome.i18n.getMessage("saved") || "Saved.";
+    setTimeout(() => (status.textContent = ""), 1200);
   }
 }
 
-load();
+async function go() {
+  const raw = ($("name")?.value || "").trim();
+  if (!raw) return;
+
+  const name = raw.toLowerCase().endsWith(".iota") ? raw.toLowerCase() : `${raw.toLowerCase()}.iota`;
+
+  await saveAll();
+
+  setStatus(chrome.i18n.getMessage("resolving") || "Resolving…");
+
+  let res = null;
+  try {
+    res = await chrome.runtime.sendMessage({ type: "resolveNow", name });
+  } catch (e) {
+    setStatus(String(e?.message || e || "Message failed"));
+    return;
+  }
+
+  if (!res?.ok) {
+    setStatus(res?.error || chrome.i18n.getMessage("unknownError") || "Unknown error");
+    return;
+  }
+
+  const payload = res.payload || {};
+  const autoRedirect = !!$("redirect")?.checked;
+
+  // Always navigate somewhere visible:
+  // - If a website is present and auto-redirect is enabled -> go to website
+  // - Otherwise -> open the extension details page
+  const targetUrl = (autoRedirect && payload.websiteUrl)
+    ? payload.websiteUrl
+    : chrome.runtime.getURL(`resolve.html?name=${encodeURIComponent(name)}`);
+
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab?.id) {
+    await chrome.tabs.update(tab.id, { url: targetUrl });
+    window.close();
+    return;
+  }
+
+  // Fallback: open a new tab if no active tab is available
+  await chrome.tabs.create({ url: targetUrl });
+  window.close();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  load().catch((e) => setStatus(String(e?.message || e || "Failed to load")));
+});
