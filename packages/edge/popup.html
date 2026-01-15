@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title data-i18n="popupTitle">IOTA Resolve</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <main class="wrap">
+    <h1 data-i18n="popupTitle">IOTA Resolve</h1>
+
+    <div class="row">
+      <input id="name" type="text" data-i18n-attr='{"placeholder":"namePlaceholder"}' placeholder="foundation.iota" autofocus />
+      <button id="go" class="primary" data-i18n="go">Go</button>
+    </div>
+
+    <label class="row2">
+      <input id="redirect" type="checkbox" />
+      <span data-i18n="autoRedirect">Auto-redirect if a website is set</span>
+    </label>
+
+    <details class="adv">
+      <summary<span data-i18n="advanced">Advanced</span>/summary>
+      <div class="blk">
+        <label class="lbl" data-i18n="network">Network</label>
+        <select id="network">
+          <option value="mainnet">Mainnet</option>
+          <option value="testnet">Testnet</option>
+          <option value="devnet">Devnet</option>
+          <option value="custom">Custom</option>
+        </select>
+
+        <label class="lbl" data-i18n="rpcUrl">RPC URL</label>
+        <input id="rpcUrl" type="url" placeholder="https://api.mainnet.iota.cafe:443" />
+        <div class="row3">
+          <button id="saveRpc"<span data-i18n="save">Save</span>/button>
+          <span id="status" class="muted"></span>
+        </div>
+      </div>
+    </details>
+
+    <pre id="out" class="pre"></pre>
+
+    <div class="actions">
+      <a id="opts" href="options.html" target="_blank" rel="noreferrer"<span data-i18n="settings">Settings</span>/a>
+    </div>
+  </main>
+  <script src="i18n.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

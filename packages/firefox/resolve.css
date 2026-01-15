@@ -1,0 +1,40 @@
+:root { color-scheme: light dark; }
+body { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 0; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
+.hdr { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+h1 { margin: 0; font-size: 22px; }
+.sub { opacity: 0.85; margin-top: 3px; }
+.hdr-actions { display: flex; gap: 10px; align-items: center; }
+.link { opacity: 0.9; text-decoration: none; border: 1px solid rgba(127,127,127,.35); padding: 8px 10px; border-radius: 10px; }
+.card { border: 1px solid rgba(127,127,127,.35); border-radius: 12px; padding: 14px; margin: 12px 0; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+.kv { display: grid; grid-template-columns: 160px 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px dashed rgba(127,127,127,.25); }
+.kv:last-child { border-bottom: none; }
+.pre { white-space: pre-wrap; overflow-wrap: anywhere; border-radius: 12px; padding: 10px; border: 1px solid rgba(127,127,127,.25); }
+.muted { opacity: 0.85; }
+.foot { margin-top: 10px; }
+button { padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(127,127,127,.45); background: transparent; cursor: pointer; }
+button.primary { font-weight: 600; }
+.row { display:flex; justify-content:space-between; gap:10px; padding:6px 0; border-bottom:1px dashed rgba(127,127,127,.25);}
+.row:last-child{border-bottom:none;}
+.key { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; opacity:.9;}
+.val { overflow-wrap:anywhere; }
+
+
+/* Modern metadata layout */
+.meta { display: grid; gap: 12px; }
+.meta-section { border: 1px solid rgba(127,127,127,.25); border-radius: 12px; padding: 12px; }
+.meta-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.meta-title { margin: 0; font-size: 14px; font-weight: 700; opacity: .95; }
+.meta-sub { font-size: 12px; opacity: .8; }
+.meta-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.meta-item { display: grid; grid-template-columns: 140px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px dashed rgba(127,127,127,.22); }
+.meta-item:last-child { border-bottom: none; }
+.meta-key { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; opacity: .85; }
+.meta-val { overflow-wrap:anywhere; }
+.meta-actions { display: flex; gap: 8px; align-items:center; justify-content:flex-end; }
+.btn-mini { padding: 6px 10px; border-radius: 10px; border: 1px solid rgba(127,127,127,.35); background: transparent; cursor: pointer; font-size: 12px; opacity: .9; }
+.avatar { width: 72px; height: 72px; border-radius: 14px; object-fit: cover; border: 1px solid rgba(127,127,127,.35); }
+.meta-item.avatar-row { grid-template-columns: 140px auto 1fr; align-items: start; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(127,127,127,.25); font-size: 12px; opacity: .92; }

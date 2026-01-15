@@ -1,0 +1,10 @@
+dist/
+.DS_Store
+Thumbs.db
+safari/build/
+safari/.build/
+*.xcarchive
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.swp
+node_modules/

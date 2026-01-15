@@ -1,0 +1,33 @@
+name: Release assets (per browser folders)
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build store packages
+        run: bash scripts/package.sh
+
+      - name: Bundle per-browser folders under dist/assets
+        run: bash scripts/bundle_assets.sh
+
+      - name: Attach per-browser assets to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/iota-names-resolver-chromium.zip
+            dist/iota-names-resolver-edge.zip
+            dist/iota-names-resolver-firefox.xpi
+            dist/assets-chromium.zip
+            dist/assets-edge.zip
+            dist/assets-firefox.zip
+            dist/SHA256SUMS.txt

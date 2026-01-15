@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title data-i18n="resolveTitleSuffix">IOTA Name</title>
+  <link rel="stylesheet" href="resolve.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="hdr">
+      <div>
+        <h1 id="title">IOTA Name</h1>
+        <div class="sub" id="sub"></div>
+      </div>
+      <div class="hdr-actions">
+        <button id="openWebsiteBtn" class="primary" hidden data-i18n="openWebsite">Open website</button>
+        <a class="link" id="openOptions" href="options.html" data-i18n="settings">Settings</a>
+      </div>
+    </header>
+
+    <section class="card" id="errorCard" hidden>
+      <h2 data-i18n="error">Error</h2>
+      <pre id="errorText" class="pre"></pre>
+    </section>
+
+    <section class="grid">
+      <section class="card">
+        <h2 data-i18n="overview">Overview</h2>
+        <div class="kv"><span>Name</span><span id="nameVal">–</span></div>
+        <div class="kv"><span data-i18n="targetAddress">Target address</span><span id="targetVal">–</span></div>
+        <div class="kv"><span data-i18n="expires">Expires</span><span id="expVal">–</span></div>
+        <div class="kv"><span data-i18n="nftId">NFT ID</span><span id="nftVal">–</span></div>
+        <div class="kv"><span data-i18n="website">Website</span><span id="webVal">–</span></div>
+      </section>
+
+      <section class="card">
+        <h2 data-i18n="records">Records (data)</h2>
+        <div id="metadata" class="meta"></div>
+      </section>
+    </section>
+
+    <section class="card">
+      <h2 data-i18n="rawJson">Raw JSON</h2>
+      <pre id="raw" class="pre"></pre>
+    </section>
+
+    <footer class="muted foot" data-i18n="footerNote">Note: ...</footer>
+  </main>
+
+  <script src="i18n.js"></script>
+  <script src="resolve.js"></script>
+</body>
+</html>

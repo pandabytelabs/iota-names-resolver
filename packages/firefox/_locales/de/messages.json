@@ -1,0 +1,119 @@
+{
+  "extName": {
+    "message": "IOTA Names Resolver (.iota)"
+  },
+  "extDescription": {
+    "message": "Löst .iota Namen über IOTA JSON-RPC (iotax_iotaNamesLookup) auf, leitet optional auf die hinterlegte Website weiter und zeigt Records an."
+  },
+  "popupTitle": {
+    "message": "IOTA Resolve"
+  },
+  "go": {
+    "message": "Los"
+  },
+  "autoRedirect": {
+    "message": "Automatisch weiterleiten, wenn Website hinterlegt"
+  },
+  "advanced": {
+    "message": "Erweitert"
+  },
+  "network": {
+    "message": "Netzwerk"
+  },
+  "rpcUrl": {
+    "message": "RPC URL"
+  },
+  "save": {
+    "message": "Speichern"
+  },
+  "saved": {
+    "message": "Gespeichert."
+  },
+  "settings": {
+    "message": "Einstellungen"
+  },
+  "resolving": {
+    "message": "Resolving…"
+  },
+  "unknownError": {
+    "message": "Unbekannter Fehler"
+  },
+  "optionsTitle": {
+    "message": "IOTA Names Resolver – Einstellungen"
+  },
+  "optionsIntro": {
+    "message": "Resolviert *.iota über JSON‑RPC (iotax_iotaNamesLookup)."
+  },
+  "rpcNetwork": {
+    "message": "RPC / Netzwerk"
+  },
+  "resolutionNav": {
+    "message": "Auflösung / Navigation"
+  },
+  "autoRedirectLong": {
+    "message": "Automatisch weiterleiten (wenn Website hinterlegt)"
+  },
+  "showDetailsNoWebsite": {
+    "message": "Details anzeigen, wenn keine Website"
+  },
+  "websiteKeys": {
+    "message": "Website‑Keys (Komma‑separiert)"
+  },
+  "cacheTtl": {
+    "message": "Cache‑TTL (Sekunden)"
+  },
+  "quickTest": {
+    "message": "Schnelltest"
+  },
+  "resolve": {
+    "message": "Resolve"
+  },
+  "endpointsHint": {
+    "message": "Endpunkte folgen typischerweise dem Muster https://api.NETWORK.iota.cafe:443 bzw. https://indexer.NETWORK.iota.cafe:443."
+  },
+  "resolveTitleSuffix": {
+    "message": "IOTA Name"
+  },
+  "resolveSubtitle": {
+    "message": "Auflösung über IOTA Names"
+  },
+  "openWebsite": {
+    "message": "Website öffnen"
+  },
+  "error": {
+    "message": "Fehler"
+  },
+  "overview": {
+    "message": "Übersicht"
+  },
+  "targetAddress": {
+    "message": "Target Address"
+  },
+  "expires": {
+    "message": "Expires"
+  },
+  "nftId": {
+    "message": "NFT ID"
+  },
+  "website": {
+    "message": "Website"
+  },
+  "records": {
+    "message": "Records (data)"
+  },
+  "noRecords": {
+    "message": "Keine Records hinterlegt."
+  },
+  "rawJson": {
+    "message": "Raw JSON"
+  },
+  "footerNote": {
+    "message": "Hinweis: Diese Seite ist lokal (Extension). In Brave kann foundation.iota ohne Schema als Suche interpretiert werden – nutze https://foundation.iota/ oder die Omnibox: iota foundation.iota."
+  },
+  "omniboxSuggestion": {
+    "message": "IOTA Name resolven: %s (z.B. foundation.iota)"
+  },
+  "namePlaceholder": {
+    "message": "foundation.iota"
+  }
+}
