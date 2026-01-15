@@ -10,8 +10,7 @@
     "omnibox"
   ],
   "host_permissions": [
-    "*://*.iota/*",
-    "*://*.iota"
+    "*://*.iota/*"
   ],
   "background": {
     "service_worker": "service_worker.js",
