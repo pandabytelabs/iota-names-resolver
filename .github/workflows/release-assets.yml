@@ -24,10 +24,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/iota-names-resolver-chromium.zip
-            dist/iota-names-resolver-edge.zip
-            dist/iota-names-resolver-firefox.xpi
             dist/assets-chromium.zip
             dist/assets-edge.zip
             dist/assets-firefox.zip
-            dist/SHA256SUMS.txt
