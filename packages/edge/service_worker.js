@@ -25,6 +25,22 @@ function isIotaHost(hostname) {
   return typeof hostname === "string" && hostname.toLowerCase().endsWith(".iota");
 }
 
+function hasNoRedirectHint(url) {
+  try {
+    const q = (
+      url.searchParams.get("inr_no_redirect") ||
+      url.searchParams.get("inrNoRedirect") ||
+      url.searchParams.get("inr-no-redirect") ||
+      ""
+    ).toLowerCase();
+    if (q && q !== "0" && q !== "false" && q !== "no") return true;
+
+    const h = (url.hash || "").toLowerCase();
+    if (h.includes("inr-no-redirect") || h.includes("inr_no_redirect")) return true;
+  } catch (_) {}
+  return false;
+}
+
 function normalizeHttpUrl(value) {
   if (typeof value !== "string") return null;
   const s = value.trim();
@@ -141,12 +157,18 @@ async function handleNavigation(details) {
 
     const name = url.hostname;
     const settings = await getSettings();
+    const noRedirectHint = hasNoRedirectHint(url);
 
     const record = await resolveIotaName(name);
     const websiteUrl = pickWebsiteUrl(record?.data, settings.websiteKeys);
 
     const payload = { name, record, websiteUrl, resolvedAt: new Date().toISOString() };
     await (chrome.storage.session || chrome.storage.local).set({ [`last:${details.tabId}`]: payload });
+
+    if (noRedirectHint) {
+      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name) });
+      return;
+    }
 
     if (settings.autoRedirect && websiteUrl) {
       // try to preserve path/query/hash when destination is origin-only
