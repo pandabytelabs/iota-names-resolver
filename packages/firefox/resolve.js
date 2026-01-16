@@ -448,15 +448,20 @@ async function load() {
   $("webVal").textContent = safeText(website);
 
   const recordsDetails = $("recordsDetails");
+  const rawDetails = $("rawDetails");
   const dataObj = record?.data;
   if (recordsDetails) {
     const show = hasAnyRecordData(dataObj);
     recordsDetails.hidden = !show;
+    // Default: collapsed.
+    recordsDetails.open = false;
     if (show) renderMetadata(dataObj);
   } else {
     // Fallback for older layouts
     renderMetadata(dataObj);
   }
+  // Default: collapsed.
+  if (rawDetails) rawDetails.open = false;
   $("raw").textContent = JSON.stringify(payload, null, 2);
 
   if (website) {

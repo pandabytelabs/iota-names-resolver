@@ -31,21 +31,19 @@
       <div class="kv"><span data-i18n="expires">Expires</span><span id="expVal">–</span></div>
       <div class="kv"><span data-i18n="nftId">NFT ID</span><span id="nftVal">–</span></div>
       <div class="kv"><span data-i18n="website">Website</span><span id="webVal">–</span></div>
-
-      <!-- Records (data) are only shown if any data exists. Default: collapsed. -->
-      <details id="recordsDetails" class="acc" hidden>
-        <summary class="acc-sum"><span class="acc-title" data-i18n="records">Records (data)</span></summary>
-        <div id="metadata" class="meta acc-body"></div>
-      </details>
     </section>
 
-    <section class="card">
-      <!-- Default: collapsed. -->
-      <details id="rawDetails" class="acc">
-        <summary class="acc-sum"><span class="acc-title" data-i18n="rawJson">Raw JSON</span></summary>
-        <pre id="raw" class="pre acc-body"></pre>
-      </details>
-    </section>
+    <!-- Records (data): own box, only shown if any data exists. Default: collapsed. -->
+    <details id="recordsDetails" class="card acc" hidden>
+      <summary class="acc-sum"><span class="acc-title" data-i18n="records">Records (data)</span></summary>
+      <div id="metadata" class="meta acc-body"></div>
+    </details>
+
+    <!-- Raw JSON: own box. Default: collapsed. -->
+    <details id="rawDetails" class="card acc">
+      <summary class="acc-sum"><span class="acc-title" data-i18n="rawJson">Raw JSON</span></summary>
+      <pre id="raw" class="pre acc-body"></pre>
+    </details>
 
     <footer class="muted foot" data-i18n="footerNote">Note: ...</footer>
   </main>
