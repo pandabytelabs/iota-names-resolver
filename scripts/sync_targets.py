@@ -33,7 +33,9 @@ if sw.exists():
 
 mf_path = ff / "manifest.json"
 mf = json.loads(mf_path.read_text(encoding="utf-8"))
-mf.pop("host_permissions", None)
+
+# Firefox supports MV3 host_permissions. Keep host_permissions and remove any Chromium-only
+# permission strings that Firefox rejects.
 
 bg_obj = mf.get("background", {})
 bg_obj.pop("type", None)
@@ -42,7 +44,10 @@ bg_obj["scripts"] = ["background.js"]
 mf["background"] = bg_obj
 
 perms = set(mf.get("permissions", []))
-perms.add("*://*.iota/*")
+
+# Firefox does not accept "omnibox" as a permission string (the omnibox feature is declared
+# via the "omnibox" manifest key). Host match patterns must live in host_permissions.
+perms.discard("omnibox")
 mf["permissions"] = sorted(perms)
 
 mf["browser_specific_settings"] = mf.get("browser_specific_settings", {
