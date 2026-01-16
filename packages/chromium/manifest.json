@@ -1,20 +1,18 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extName__",
-  "version": "26.1.16.2",
+  "version": "26.1.16.3",
   "description": "__MSG_extDescription__",
   "permissions": [
     "tabs",
     "storage",
-    "webNavigation",
-    "omnibox"
+    "webNavigation"
   ],
   "host_permissions": [
     "*://*.iota/*"
   ],
   "background": {
-    "service_worker": "service_worker.js",
-    "type": "module"
+    "service_worker": "service_worker.js"
   },
   "options_page": "options.html",
   "action": {
