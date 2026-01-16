@@ -200,36 +200,52 @@ async function handleNavigation(details) {
   }
 }
 
-chrome.webNavigation.onBeforeNavigate.addListener(handleNavigation, {
-  url: [{ hostSuffix: "iota", schemes: ["http", "https"] }],
-});
+if (chrome?.webNavigation?.onBeforeNavigate?.addListener) {
+  try {
+    chrome.webNavigation.onBeforeNavigate.addListener(handleNavigation, {
+      url: [{ hostSuffix: "iota", schemes: ["http", "https"] }],
+    });
+  } catch (_) {
+    // Some browsers (notably Safari) have partial support for webNavigation filters.
+    chrome.webNavigation.onBeforeNavigate.addListener(handleNavigation);
+  }
+}
 
-// --- Omnibox integration ---
-// Usage: type "iota <name>" then Enter. Example: iota example.iota
-chrome.omnibox.setDefaultSuggestion({
-  description: (chrome.i18n.getMessage("omniboxSuggestion", ["%s"]) || 'Resolve IOTA Name: %s (e.g. example.iota)').replace("%s", "<match>%s</match>")
-});
+const hasOmnibox =
+  chrome?.omnibox &&
+  typeof chrome.omnibox.setDefaultSuggestion === "function" &&
+  chrome.omnibox.onInputEntered &&
+  typeof chrome.omnibox.onInputEntered.addListener === "function";
 
-chrome.omnibox.onInputEntered.addListener(async (text, disposition) => {
-  const raw = (text || "").trim();
-  if (!raw) return;
+if (hasOmnibox) {
+  // --- Omnibox integration ---
+  // Usage: type "iota <name>" then Enter. Example: iota example.iota
+  chrome.omnibox.setDefaultSuggestion({
+    description: (chrome.i18n.getMessage("omniboxSuggestion", ["%s"]) || 'Resolve IOTA Name: %s (e.g. example.iota)').replace("%s", "<match>%s</match>")
+  });
 
-  const name = raw.toLowerCase().endsWith(".iota") ? raw : `${raw}.iota`;
-  const target = `https://${name}/`;
+  chrome.omnibox.onInputEntered.addListener(async (text, disposition) => {
+    const raw = (text || "").trim();
+    if (!raw) return;
 
-  const openIn = async (url) => {
-    if (disposition === "currentTab") {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tab?.id) return chrome.tabs.update(tab.id, { url });
+    const name = raw.toLowerCase().endsWith(".iota") ? raw : `${raw}.iota`;
+    const target = `https://${name}/`;
+
+    const openIn = async (url) => {
+      if (disposition === "currentTab") {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tab?.id) return chrome.tabs.update(tab.id, { url });
+        return chrome.tabs.create({ url });
+      }
+      if (disposition === "newForegroundTab") return chrome.tabs.create({ url });
+      if (disposition === "newBackgroundTab") return chrome.tabs.create({ url, active: false });
       return chrome.tabs.create({ url });
-    }
-    if (disposition === "newForegroundTab") return chrome.tabs.create({ url });
-    if (disposition === "newBackgroundTab") return chrome.tabs.create({ url, active: false });
-    return chrome.tabs.create({ url });
-  };
+    };
 
-  await openIn(target);
-});
+    await openIn(target);
+  });
+
+}
 
 // Messaging API for popup/options/resolve
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
