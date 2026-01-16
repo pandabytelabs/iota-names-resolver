@@ -409,6 +409,10 @@ function renderMetadata(data) {
   }
 }
 
+function hasAnyRecordData(data) {
+  return !!(data && typeof data === "object" && Object.keys(data).length > 0);
+}
+
 async function load() {
   const url = new URL(location.href);
   const name = url.searchParams.get("name") || "(.iota)";
@@ -443,7 +447,16 @@ async function load() {
   $("nftVal").textContent = safeText(record?.nftId ?? null);
   $("webVal").textContent = safeText(website);
 
-  renderMetadata(record?.data);
+  const recordsDetails = $("recordsDetails");
+  const dataObj = record?.data;
+  if (recordsDetails) {
+    const show = hasAnyRecordData(dataObj);
+    recordsDetails.hidden = !show;
+    if (show) renderMetadata(dataObj);
+  } else {
+    // Fallback for older layouts
+    renderMetadata(dataObj);
+  }
   $("raw").textContent = JSON.stringify(payload, null, 2);
 
   if (website) {

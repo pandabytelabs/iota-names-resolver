@@ -38,3 +38,14 @@ button.primary { font-weight: 600; }
 .avatar { width: 72px; height: 72px; border-radius: 14px; object-fit: cover; border: 1px solid rgba(127,127,127,.35); }
 .meta-item.avatar-row { grid-template-columns: 140px auto 1fr; align-items: start; }
 .chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(127,127,127,.25); font-size: 12px; opacity: .92; }
+
+/* Collapsible sections (Records / Raw JSON) */
+.acc { margin-top: 12px; }
+.acc[hidden] { display: none !important; }
+.acc { border-top: 1px dashed rgba(127,127,127,.25); padding-top: 12px; }
+.acc-sum { cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 0; user-select: none; }
+.acc-sum::-webkit-details-marker { display: none; }
+.acc-sum::after { content: "▸"; opacity: .85; }
+details[open] > .acc-sum::after { content: "▾"; }
+.acc-title { font-size: 16px; font-weight: 700; }
+.acc-body { margin-top: 10px; }

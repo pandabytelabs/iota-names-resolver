@@ -24,25 +24,27 @@
       <pre id="errorText" class="pre"></pre>
     </section>
 
-    <section class="grid">
-      <section class="card">
-        <h2 data-i18n="overview">Overview</h2>
-        <div class="kv"><span>Name</span><span id="nameVal">–</span></div>
-        <div class="kv"><span data-i18n="targetAddress">Target address</span><span id="targetVal">–</span></div>
-        <div class="kv"><span data-i18n="expires">Expires</span><span id="expVal">–</span></div>
-        <div class="kv"><span data-i18n="nftId">NFT ID</span><span id="nftVal">–</span></div>
-        <div class="kv"><span data-i18n="website">Website</span><span id="webVal">–</span></div>
-      </section>
+    <section class="card">
+      <h2 data-i18n="overview">Overview</h2>
+      <div class="kv"><span>Name</span><span id="nameVal">–</span></div>
+      <div class="kv"><span data-i18n="targetAddress">Target address</span><span id="targetVal">–</span></div>
+      <div class="kv"><span data-i18n="expires">Expires</span><span id="expVal">–</span></div>
+      <div class="kv"><span data-i18n="nftId">NFT ID</span><span id="nftVal">–</span></div>
+      <div class="kv"><span data-i18n="website">Website</span><span id="webVal">–</span></div>
 
-      <section class="card">
-        <h2 data-i18n="records">Records (data)</h2>
-        <div id="metadata" class="meta"></div>
-      </section>
+      <!-- Records (data) are only shown if any data exists. Default: collapsed. -->
+      <details id="recordsDetails" class="acc" hidden>
+        <summary class="acc-sum"><span class="acc-title" data-i18n="records">Records (data)</span></summary>
+        <div id="metadata" class="meta acc-body"></div>
+      </details>
     </section>
 
     <section class="card">
-      <h2 data-i18n="rawJson">Raw JSON</h2>
-      <pre id="raw" class="pre"></pre>
+      <!-- Default: collapsed. -->
+      <details id="rawDetails" class="acc">
+        <summary class="acc-sum"><span class="acc-title" data-i18n="rawJson">Raw JSON</span></summary>
+        <pre id="raw" class="pre acc-body"></pre>
+      </details>
     </section>
 
     <footer class="muted foot" data-i18n="footerNote">Note: ...</footer>
