@@ -1,7 +1,7 @@
 // IOTA Names Resolver - Service Worker (Manifest V3)
 // - Detect navigations to *.iota and resolve via JSON-RPC method iotax_iotaNamesLookup.
 // - If a website record is found (configurable key list), redirect to it; otherwise show resolve.html.
-// - Provides omnibox keyword "iota" to work around Brave treating bare "name.iota" as search.
+// - Provides omnibox keyword "iota" to work around Browser treating bare "name.iota" as search.
 
 const DEFAULTS = {
   network: "mainnet", // mainnet|testnet|devnet|custom

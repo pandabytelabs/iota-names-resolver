@@ -108,7 +108,7 @@
     "message": "Raw JSON"
   },
   "footerNote": {
-    "message": "Hinweis: Diese Seite ist lokal (Extension). In Brave kann example.iota ohne Schema als Suche interpretiert werden – nutze https://example.iota/ oder die Omnibox: iota example.iota."
+    "message": "Hinweis: Diese Seite ist lokal (Extension). Im Browser kann example.iota ohne Schema als Suche interpretiert werden – nutze https://example.iota/ oder die Omnibox: iota example.iota."
   },
   "omniboxSuggestion": {
     "message": "IOTA Name resolven: %s (z.B. example.iota)"
