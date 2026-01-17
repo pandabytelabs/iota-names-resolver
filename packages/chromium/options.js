@@ -2,7 +2,8 @@ window.__i18n?.apply?.();
 const DEFAULTS = {
   network: "mainnet",
   rpcUrl: "https://api.mainnet.iota.cafe:443",
-  autoRedirect: true,
+  // Opt-in: redirecting to a resolved website must be explicitly enabled by the user.
+  autoRedirect: false,
   websiteKeys: ["website", "url", "web", "homepage", "link"],
   showDetailsWhenNoWebsite: true,
   cacheTtlMs: 5 * 60 * 1000,
