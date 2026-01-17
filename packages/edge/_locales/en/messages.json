@@ -108,7 +108,7 @@
     "message": "Raw JSON"
   },
   "footerNote": {
-    "message": "Note: This is a local extension page. In Brave, entering example.iota without a scheme may be treated as search — use https://example.iota/ or the omnibox: iota example.iota."
+    "message": "Note: This is a local extension page. In Browser, entering example.iota without a scheme may be treated as search — use https://example.iota/ or the omnibox: iota example.iota."
   },
   "omniboxSuggestion": {
     "message": "Resolve IOTA Name: %s (e.g. example.iota)"
