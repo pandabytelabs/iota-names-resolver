@@ -12,6 +12,29 @@ const DEFAULTS = {
   cacheTtlMs: 5 * 60 * 1000,
 };
 
+// --- Per-tab state ---
+const LAST_PREFIX = "last:";
+
+async function setLastForTab(tabId, payload) {
+  return chrome.storage.local.set({ [LAST_PREFIX + tabId]: payload });
+}
+
+async function getLastForTab(tabId) {
+  const key = LAST_PREFIX + tabId;
+  const stored = await chrome.storage.local.get(key);
+  return stored[key] ?? null;
+}
+
+async function clearLastForTab(tabId) {
+  return chrome.storage.local.remove(LAST_PREFIX + tabId);
+}
+
+if (chrome?.tabs?.onRemoved?.addListener) {
+  chrome.tabs.onRemoved.addListener((tabId) => {
+    clearLastForTab(tabId).catch(() => {});
+  });
+}
+
 const cache = new Map(); // key -> {value, expiresAt}
 
 function now() { return Date.now(); }
@@ -163,7 +186,7 @@ async function handleNavigation(details) {
     const websiteUrl = pickWebsiteUrl(record?.data, settings.websiteKeys);
 
     const payload = { name, record, websiteUrl, resolvedAt: new Date().toISOString() };
-    await (chrome.storage.session || chrome.storage.local).set({ [`last:${details.tabId}`]: payload });
+    await setLastForTab(details.tabId, payload);
 
     if (noRedirectHint) {
       await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name) });
@@ -194,7 +217,7 @@ async function handleNavigation(details) {
       const u = new URL(details.url);
       const name = isIotaHost(u.hostname) ? u.hostname : "(unknown)";
       const payload = { name, error: String(e?.message || e), resolvedAt: new Date().toISOString() };
-      await (chrome.storage.session || chrome.storage.local).set({ [`last:${details.tabId}`]: payload });
+      await setLastForTab(details.tabId, payload);
       await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name) });
     } catch (_) {}
   }
@@ -253,9 +276,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg?.type === "getLastForTab") {
       const tabId = msg.tabId ?? sender?.tab?.id;
       if (typeof tabId !== "number") return sendResponse({ ok: false, error: "No tabId" });
-      const key = `last:${tabId}`;
-      const stored = await (chrome.storage.session || chrome.storage.local).get(key);
-      return sendResponse({ ok: true, payload: stored[key] ?? null });
+      const payload = await getLastForTab(tabId);
+      return sendResponse({ ok: true, payload });
     }
 
     if (msg?.type === "resolveNow") {
