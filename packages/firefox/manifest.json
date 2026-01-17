@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extName__",
-  "version": "26.1.17.0",
+  "version": "26.1.17.1",
   "description": "__MSG_extDescription__",
   "permissions": [
     "storage",
@@ -15,10 +15,6 @@
     "scripts": [
       "background.js"
     ]
-  },
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
   },
   "action": {
     "default_title": "IOTA Names Resolver",
@@ -37,10 +33,19 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "addon@pandabyte.net",
-      "strict_min_version": "109.0"
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "browsingActivity"
+        ]
+      }
     },
     "gecko_android": {
-      "strict_min_version": "109.0"
+      "strict_min_version": "142.0"
     }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
   }
 }
