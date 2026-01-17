@@ -6,7 +6,8 @@
 const DEFAULTS = {
   network: "mainnet", // mainnet|testnet|devnet|custom
   rpcUrl: "https://api.mainnet.iota.cafe:443",
-  autoRedirect: true,
+  // Opt-in: redirecting users away from the entered .iota URL must be explicitly enabled.
+  autoRedirect: false,
   websiteKeys: ["website", "url", "web", "homepage", "link"],
   showDetailsWhenNoWebsite: true,
   cacheTtlMs: 5 * 60 * 1000,
