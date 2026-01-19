@@ -1,5 +1,5 @@
 :root { color-scheme: light dark; }
-body { font: 13px/1.35 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background-color: Canvas; color: CanvasText; }
+body { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background-color: Canvas; color: CanvasText; }
 .wrap { width: 380px; padding: 12px; }
 
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 10px 0; }
@@ -44,9 +44,9 @@ button.primary { font-weight:600; display: inline-flex; align-items: center; jus
 }
 .icon-btn:hover { opacity: 1; }
 
-.pre { margin-top:10px; white-space: pre-wrap; border-radius:12px; padding:8px; border:1px solid rgba(127,127,127,.25); min-height:66px; overflow-wrap:anywhere; }
+.pre { margin-top:10px; white-space: pre-wrap; border-radius:12px; padding:10px; border:1px solid rgba(127,127,127,.25); min-height:66px; overflow-wrap:anywhere; }
 .muted { opacity:.85; }
-.adv { margin-top: 10px; border: 1px solid rgba(127,127,127,.25); border-radius: 12px; padding: 8px 10px; }
+.adv { margin-top: 10px; border: 1px solid rgba(127,127,127,.35); border-radius: 12px; padding: 8px 10px; }
 .adv > summary { cursor: pointer; }
 .blk { margin-top: 8px; }
 .lbl { display:block; margin: 6px 0; opacity:.9; }
@@ -69,3 +69,5 @@ button.primary.flash-saved {
 
 /* Ensure hidden status box is not visible even if other CSS sets display */
 #advStatus[hidden]{display:none !important;}
+
+.icon-btn svg { display:block; width:18px; height:18px; transform: translateY(1px); }

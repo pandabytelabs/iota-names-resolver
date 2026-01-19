@@ -96,3 +96,17 @@ button.primary { font-weight: 600; }
 details[open] > .acc-sum::after { content: "▾"; }
 .acc-title { font-size: 16px; font-weight: 700; }
 .acc-body { margin-top: 12px; }
+
+/* Settings gear button in header */
+#openOptions.icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  line-height: 0;
+}
+#openOptions.icon-btn svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  transform: translateY(1px);
+}
