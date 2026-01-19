@@ -11,12 +11,51 @@ const DEFAULTS = {
 
 const $ = (id) => document.getElementById(id);
 
+const BACK_REFERRERS = ["resolve.html", "redirect.html"]; 
+
+function initBackButton() {
+  const btn = $("backBtn");
+  if (!btn) return;
+
+  let show = false;
+  try {
+    const ref = document.referrer || "";
+    if (ref) {
+      const u = new URL(ref);
+      show = (u.origin === location.origin) && BACK_REFERRERS.some(p => (u.pathname || "").endsWith(p));
+    }
+  } catch (_) {
+    // ignore
+  }
+
+  // Fallback: if history has a previous entry, allow going back.
+  if (!show && window.history.length > 1) {
+    show = true;
+  }
+
+  if (show) {
+    btn.hidden = false;
+    btn.addEventListener("click", () => {
+      // Prefer browser history so the user returns to the exact previous page.
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        // As a fallback, try the referrer.
+        const ref = document.referrer;
+        if (ref) location.href = ref;
+      }
+    });
+  }
+}
+
+
 function applyNetworkPreset(network) {
   if (network === "custom") return;
   $("rpcUrl").value = `https://api.${network}.iota.cafe:443`;
 }
 
 async function load() {
+  initBackButton();
   const stored = await chrome.storage.sync.get(DEFAULTS);
   $("network").value = stored.network || "mainnet";
   $("rpcUrl").value = stored.rpcUrl || DEFAULTS.rpcUrl;

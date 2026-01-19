@@ -62,9 +62,8 @@ async function load() {
 async function saveAll() {
   const rpcUrl = ($("rpcUrl")?.value || "").trim() || DEFAULTS.rpcUrl;
   const network = $("network")?.value || DEFAULTS.network;
-  const autoRedirect = !!$("redirect")?.checked;
-
-  await chrome.storage.sync.set({ rpcUrl, network, autoRedirect });
+  // Note: auto-redirect toggle in the popup is intentionally temporary and is not persisted.
+  await chrome.storage.sync.set({ rpcUrl, network });
 
   const status = $("status");
   if (status) {
@@ -97,8 +96,6 @@ async function go() {
   }
 
   const payload = res.payload || {};
-  const autoRedirect = !!$("redirect")?.checked;
-
   // Always navigate somewhere visible:
   // - If a website is present and auto-redirect is enabled -> go to website
   // - Otherwise -> open the extension details page

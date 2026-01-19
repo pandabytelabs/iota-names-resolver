@@ -21,3 +21,6 @@ input[type="checkbox"] { transform: scale(1.1); }
 button { padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(127,127,127,.45); background: transparent; cursor: pointer; }
 button.primary { font-weight: 600; }
 .pre { white-space: pre-wrap; border-radius: 12px; padding: 10px; border: 1px solid rgba(127,127,127,.35); min-height: 72px; }
+
+.topbar { display: flex; align-items: center; margin-bottom: 10px; }
+.back { padding: 6px 10px; border-radius: 999px; font-weight: 600; }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>IOTA Names Resolver – Redirect preview</title>
+  <title>IOTA Names Resolver - Redirect preview</title>
   <link rel="stylesheet" href="redirect.css" />
 </head>
 <body>
@@ -14,17 +14,19 @@
       <p class="intro" data-i18n="redirectPreviewIntro">Auto-redirect is enabled. Please review the destination URL before continuing.</p>
 
       <div class="urlbox" aria-label="Destination URL">
-        <div class="host" id="host">—</div>
+        <div class="urlrow">
+          <div class="host" id="host">—</div>
+          <button id="copy" class="btn mini ghost" type="button" data-i18n="redirectPreviewCopy">Copy URL</button>
+</div>
         <div class="full" id="full">—</div>
       </div>
 
       <div class="countdown" id="countdownText"></div>
 
       <div class="actions">
+        <button id="proceed" class="btn primary" type="button" data-i18n="redirectPreviewProceed">Pause redirect</button>
         <button id="cancel" class="btn" type="button" data-i18n="redirectPreviewCancel">Cancel</button>
-        <button id="proceed" class="btn primary" type="button" data-i18n="redirectPreviewProceed">Continue now</button>
-        <button id="copy" class="btn ghost" type="button" data-i18n="redirectPreviewCopy">Copy URL</button>
-      </div>
+</div>
 
       <p class="hint" data-i18n="redirectPreviewHint">If you do not trust this link, cancel and review the record details.</p>
     </section>

@@ -12,7 +12,7 @@
     "message": "Los"
   },
   "autoRedirect": {
-    "message": "Automatisch weiterleiten, wenn Website hinterlegt"
+    "message": "Auto-Weiterleitung, wenn eine Website gesetzt ist (temporär)"
   },
   "advanced": {
     "message": "Erweitert"
@@ -135,12 +135,21 @@
     "message": "Abbrechen"
   },
   "redirectPreviewProceed": {
-    "message": "Jetzt weiter"
+    "message": "Weiterleitung pausieren"
   },
   "redirectPreviewCopy": {
     "message": "URL kopieren"
   },
   "namePlaceholder": {
     "message": "example.iota"
+  },
+  "redirectPreviewContinue": {
+    "message": "Weiterleitung fortsetzen"
+  },
+  "redirectPreviewPaused": {
+    "message": "Weiterleitung pausiert"
+  },
+  "back": {
+    "message": "Zurück"
   }
 }

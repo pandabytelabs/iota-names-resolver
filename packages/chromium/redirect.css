@@ -124,3 +124,29 @@ h1 {
   color: var(--muted);
   line-height: 1.45;
 }
+
+.urlrow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.btn.mini {
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+#proceed {
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-size: 15px;
+}
