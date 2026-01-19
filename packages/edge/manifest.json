@@ -28,5 +28,5 @@
     "128": "icons/icon128.png"
   },
   "default_locale": "en",
-  "minimum_edge_version": "110.0"
+  "minimum_chrome_version": "110"
 }
