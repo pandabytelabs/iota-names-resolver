@@ -30,11 +30,6 @@ async function clearLastForTab(tabId) {
   return chrome.storage.local.remove(LAST_PREFIX + tabId);
 }
 
-if (chrome?.tabs?.onRemoved?.addListener) {
-  chrome.tabs.onRemoved.addListener((tabId) => {
-    clearLastForTab(tabId).catch(() => {});
-  });
-}
 
 const cache = new Map(); // key -> {value, expiresAt}
 
@@ -159,9 +154,10 @@ async function resolveIotaName(name) {
   return result;
 }
 
-function buildDetailsUrl(name) {
+function buildDetailsUrl(name, tabId) {
   const u = new URL(chrome.runtime.getURL("resolve.html"));
   u.searchParams.set("name", name);
+  if (typeof tabId === "number") u.searchParams.set("tabId", String(tabId));
   return u.toString();
 }
 
@@ -190,7 +186,7 @@ async function handleNavigation(details) {
     await setLastForTab(details.tabId, payload);
 
     if (noRedirectHint) {
-      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name) });
+      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name, details.tabId) });
       return;
     }
 
@@ -211,7 +207,7 @@ async function handleNavigation(details) {
     }
 
     if (settings.showDetailsWhenNoWebsite) {
-      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name) });
+      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name, details.tabId) });
     }
   } catch (e) {
     try {
@@ -219,7 +215,7 @@ async function handleNavigation(details) {
       const name = isIotaHost(u.hostname) ? u.hostname : "(unknown)";
       const payload = { name, error: String(e?.message || e), resolvedAt: new Date().toISOString() };
       await setLastForTab(details.tabId, payload);
-      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name) });
+      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name, details.tabId) });
     } catch (_) {}
   }
 }
@@ -257,9 +253,11 @@ if (hasOmnibox) {
 
     const openIn = async (url) => {
       if (disposition === "currentTab") {
-        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (tab?.id) return chrome.tabs.update(tab.id, { url });
-        return chrome.tabs.create({ url });
+        try {
+          return await chrome.tabs.update({ url });
+        } catch (_) {
+          return chrome.tabs.create({ url });
+        }
       }
       if (disposition === "newForegroundTab") return chrome.tabs.create({ url });
       if (disposition === "newBackgroundTab") return chrome.tabs.create({ url, active: false });

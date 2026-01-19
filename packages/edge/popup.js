@@ -98,16 +98,13 @@ async function go() {
   const targetUrl = (autoRedirect && payload.websiteUrl)
     ? payload.websiteUrl
     : chrome.runtime.getURL(`resolve.html?name=${encodeURIComponent(name)}`);
-
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (tab?.id) {
-    await chrome.tabs.update(tab.id, { url: targetUrl });
-    window.close();
-    return;
+  try {
+    // No "tabs" permission needed: omit tabId to target the currently selected tab.
+    await chrome.tabs.update({ url: targetUrl });
+  } catch (_) {
+    // Fallback: open a new tab if updating the current tab is not possible
+    await chrome.tabs.create({ url: targetUrl });
   }
-
-  // Fallback: open a new tab if no active tab is available
-  await chrome.tabs.create({ url: targetUrl });
   window.close();
 }
 
