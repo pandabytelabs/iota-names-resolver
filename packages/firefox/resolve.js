@@ -418,12 +418,12 @@ async function load() {
   const name = url.searchParams.get("name") || "(.iota)";
   $("title").textContent = name;
   $("sub").textContent = chrome.i18n.getMessage("resolveSubtitle") || "Resolved via IOTA Names";
-
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const tabId = tab?.id;
+  // Avoid requiring the "tabs" permission: the background redirects to resolve.html with tabId in the query string.
+  const tabIdParam = url.searchParams.get("tabId") || url.searchParams.get("tab");
+  const tabId = tabIdParam != null && tabIdParam !== "" ? Number(tabIdParam) : null;
 
   let payload = null;
-  if (typeof tabId === "number") {
+  if (Number.isInteger(tabId)) {
     const res = await chrome.runtime.sendMessage({ type: "getLastForTab", tabId });
     if (res?.ok) payload = res.payload;
   }
