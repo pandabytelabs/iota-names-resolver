@@ -49,6 +49,28 @@ function initBackButton() {
 }
 
 
+
+let __saveFlashTimer = null;
+
+function flashSaveButton() {
+  const btn = $("saveBtn");
+  if (!btn) return;
+
+  // Capture the current (localized) label once so we can restore it.
+  if (!btn.dataset.defaultLabel) btn.dataset.defaultLabel = btn.textContent || (chrome.i18n.getMessage("save") || "Save");
+
+  const base = (chrome.i18n.getMessage("saved") || "Saved").toString().trim();
+  const clean = base.replace(/[.!。…]+\s*$/, "");
+  btn.textContent = `✔ ${clean}`;
+
+  btn.classList.add("flash-saved");
+  if (__saveFlashTimer) clearTimeout(__saveFlashTimer);
+  __saveFlashTimer = setTimeout(() => {
+    btn.classList.remove("flash-saved");
+    btn.textContent = btn.dataset.defaultLabel;
+  }, 1400);
+}
+
 function applyNetworkPreset(network) {
   if (network === "custom") return;
   $("rpcUrl").value = `https://api.${network}.iota.cafe:443`;
@@ -89,6 +111,8 @@ async function save() {
   };
 
   await chrome.storage.sync.set(payload);
+
+  flashSaveButton();
   $("status").textContent = chrome.i18n.getMessage("saved") || "Saved.";
   setTimeout(() => $("status").textContent = "", 1500);
 }

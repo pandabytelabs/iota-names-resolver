@@ -18,7 +18,7 @@ option { background-color: Canvas; color: CanvasText; }
 input[type="checkbox"] { transform: scale(1.1); }
 .hint { margin: 8px 0 0 0; opacity: 0.85; }
 .actions { display: flex; gap: 12px; align-items: center; margin-top: 16px; }
-button { padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(127,127,127,.45); background: transparent; cursor: pointer; }
+button { padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(127,127,127,.45); background: transparent; cursor: pointer; transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease; }
 button.primary { font-weight: 600; }
 .pre { white-space: pre-wrap; border-radius: 12px; padding: 10px; border: 1px solid rgba(127,127,127,.35); min-height: 72px; }
 
@@ -26,3 +26,9 @@ button.primary { font-weight: 600; }
 .back { font-weight: 600; }
 
 .actions #status { margin-right: auto; }
+
+button.primary.flash-saved {
+  border-color: rgba(46, 204, 113, 0.90);
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.18);
+  background-color: rgba(46, 204, 113, 0.08);
+}
