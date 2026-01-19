@@ -113,6 +113,27 @@
   "omniboxSuggestion": {
     "message": "Resolve IOTA Name: %s (e.g. example.iota)"
   },
+  "redirectPreviewTitle": {
+    "message": "Review destination"
+  },
+  "redirectPreviewIntro": {
+    "message": "Auto-redirect is enabled. Please review the destination URL before continuing."
+  },
+  "redirectPreviewHint": {
+    "message": "If you do not trust this link, cancel and review the record details."
+  },
+  "redirectPreviewCountdown": {
+    "message": "Redirecting in $1$ s"
+  },
+  "redirectPreviewCancel": {
+    "message": "Cancel"
+  },
+  "redirectPreviewProceed": {
+    "message": "Continue now"
+  },
+  "redirectPreviewCopy": {
+    "message": "Copy URL"
+  },
   "namePlaceholder": {
     "message": "example.iota"
   }
