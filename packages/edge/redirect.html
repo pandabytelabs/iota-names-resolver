@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IOTA Names Resolver - Redirect preview</title>
+  <link rel="stylesheet" href="redirect.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="card" role="region" aria-label="Redirect preview">
+      <div class="badge" id="badge">IOTA Names Resolver</div>
+      <h1 id="headline" data-i18n="redirectPreviewTitle">Review destination</h1>
+      <p class="intro" data-i18n="redirectPreviewIntro">Auto-redirect is enabled. Please review the destination URL before continuing.</p>
+
+      <div class="urlbox" aria-label="Destination URL">
+        <div class="urlrow">
+          <div class="host" id="host">—</div>
+          <button id="copy" class="btn mini ghost" type="button" data-i18n="redirectPreviewCopy">Copy URL</button>
+</div>
+        <div class="full" id="full">—</div>
+      </div>
+
+      <div class="countdown" id="countdownText"></div>
+
+      <div class="actions">
+        <button id="proceed" class="btn primary" type="button" data-i18n="redirectPreviewProceed">Pause redirect</button>
+        <button id="cancel" class="btn" type="button" data-i18n="redirectPreviewCancel">Cancel</button>
+</div>
+
+      <p class="hint" data-i18n="redirectPreviewHint">If you do not trust this link, cancel and review the record details.</p>
+    </section>
+  </main>
+
+  <script src="i18n.js"></script>
+  <script src="redirect.js"></script>
+</body>
+</html>

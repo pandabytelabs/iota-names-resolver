@@ -419,8 +419,8 @@ async function load() {
   $("title").textContent = name;
   $("sub").textContent = chrome.i18n.getMessage("resolveSubtitle") || "Resolved via IOTA Names";
 
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  const tabId = tab?.id;
+  const tabIdParam = url.searchParams.get("tabId");
+  const tabId = (tabIdParam && /^\d+$/.test(tabIdParam)) ? Number(tabIdParam) : null;
 
   let payload = null;
   if (typeof tabId === "number") {

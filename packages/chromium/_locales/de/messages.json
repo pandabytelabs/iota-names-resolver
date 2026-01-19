@@ -12,7 +12,7 @@
     "message": "Los"
   },
   "autoRedirect": {
-    "message": "Automatisch weiterleiten, wenn Website hinterlegt"
+    "message": "Auto-Weiterleitung, wenn eine Website gesetzt ist (temporär)"
   },
   "advanced": {
     "message": "Erweitert"
@@ -113,7 +113,43 @@
   "omniboxSuggestion": {
     "message": "IOTA Name resolven: %s (z.B. example.iota)"
   },
+  "redirectPreviewTitle": {
+    "message": "Ziel prüfen"
+  },
+  "redirectPreviewIntro": {
+    "message": "Auto-Weiterleitung ist aktiviert. Bitte prüfen Sie die Ziel-URL, bevor fortgefahren wird."
+  },
+  "redirectPreviewHint": {
+    "message": "Wenn Sie dem Link nicht vertrauen, brechen Sie ab und prüfen Sie die Record-Details."
+  },
+  "redirectPreviewCountdown": {
+    "message": "Weiterleitung in $COUNT$ s",
+    "placeholders": {
+      "COUNT": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "redirectPreviewCancel": {
+    "message": "Abbrechen"
+  },
+  "redirectPreviewProceed": {
+    "message": "Weiterleitung pausieren"
+  },
+  "redirectPreviewCopy": {
+    "message": "URL kopieren"
+  },
   "namePlaceholder": {
     "message": "example.iota"
+  },
+  "redirectPreviewContinue": {
+    "message": "Weiterleitung fortsetzen"
+  },
+  "redirectPreviewPaused": {
+    "message": "Weiterleitung pausiert"
+  },
+  "back": {
+    "message": "Zurück"
   }
 }

@@ -159,9 +159,19 @@ async function resolveIotaName(name) {
   return result;
 }
 
-function buildDetailsUrl(name) {
+function buildDetailsUrl(name, tabId) {
   const u = new URL(chrome.runtime.getURL("resolve.html"));
   u.searchParams.set("name", name);
+  if (typeof tabId === "number") u.searchParams.set("tabId", String(tabId));
+  return u.toString();
+}
+
+function buildRedirectPreviewUrl({ name, tabId, fromUrl, targetUrl }) {
+  const u = new URL(chrome.runtime.getURL("redirect.html"));
+  u.searchParams.set("name", name);
+  u.searchParams.set("target", targetUrl);
+  if (typeof tabId === "number") u.searchParams.set("tabId", String(tabId));
+  if (fromUrl) u.searchParams.set("from", fromUrl);
   return u.toString();
 }
 
@@ -173,9 +183,11 @@ async function handleNavigation(details) {
     const url = new URL(details.url);
     if (!(url.protocol === "http:" || url.protocol === "https:")) return;
 
-    // Avoid infinite loop on our internal page.
+    // Avoid infinite loop on our internal pages.
     const internal = new URL(chrome.runtime.getURL("resolve.html"));
-    if (url.origin === internal.origin && url.pathname.endsWith("/resolve.html")) return;
+    if (url.origin === internal.origin) {
+      if (url.pathname.endsWith("/resolve.html") || url.pathname.endsWith("/redirect.html")) return;
+    }
 
     if (!isIotaHost(url.hostname)) return;
 
@@ -190,7 +202,7 @@ async function handleNavigation(details) {
     await setLastForTab(details.tabId, payload);
 
     if (noRedirectHint) {
-      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name) });
+      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name, details.tabId) });
       return;
     }
 
@@ -206,12 +218,19 @@ async function handleNavigation(details) {
         if (!dest.hash && url.hash) dest.hash = url.hash;
         finalUrl = dest.toString();
       } catch (_) {}
-      await chrome.tabs.update(details.tabId, { url: finalUrl });
+      // Show a short preview of the destination URL so the user can abort.
+      const previewUrl = buildRedirectPreviewUrl({
+        name,
+        tabId: details.tabId,
+        fromUrl: details.url,
+        targetUrl: finalUrl,
+      });
+      await chrome.tabs.update(details.tabId, { url: previewUrl });
       return;
     }
 
     if (settings.showDetailsWhenNoWebsite) {
-      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name) });
+      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name, details.tabId) });
     }
   } catch (e) {
     try {
@@ -219,7 +238,7 @@ async function handleNavigation(details) {
       const name = isIotaHost(u.hostname) ? u.hostname : "(unknown)";
       const payload = { name, error: String(e?.message || e), resolvedAt: new Date().toISOString() };
       await setLastForTab(details.tabId, payload);
-      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name) });
+      await chrome.tabs.update(details.tabId, { url: buildDetailsUrl(name, details.tabId) });
     } catch (_) {}
   }
 }
@@ -257,9 +276,12 @@ if (hasOmnibox) {
 
     const openIn = async (url) => {
       if (disposition === "currentTab") {
-        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (tab?.id) return chrome.tabs.update(tab.id, { url });
-        return chrome.tabs.create({ url });
+        try {
+          // No "tabs" permission needed: omit tabId to target the currently selected tab.
+          return await chrome.tabs.update({ url });
+        } catch (_) {
+          return chrome.tabs.create({ url });
+        }
       }
       if (disposition === "newForegroundTab") return chrome.tabs.create({ url });
       if (disposition === "newBackgroundTab") return chrome.tabs.create({ url, active: false });
