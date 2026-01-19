@@ -123,7 +123,13 @@
     "message": "If you do not trust this link, cancel and review the record details."
   },
   "redirectPreviewCountdown": {
-    "message": "Redirecting in $1$ s"
+    "message": "Redirecting in $COUNT$ s",
+    "placeholders": {
+      "COUNT": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
   },
   "redirectPreviewCancel": {
     "message": "Cancel"

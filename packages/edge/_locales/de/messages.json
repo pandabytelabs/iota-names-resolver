@@ -123,7 +123,13 @@
     "message": "Wenn Sie dem Link nicht vertrauen, brechen Sie ab und prüfen Sie die Record-Details."
   },
   "redirectPreviewCountdown": {
-    "message": "Weiterleitung in $1$ s"
+    "message": "Weiterleitung in $COUNT$ s",
+    "placeholders": {
+      "COUNT": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
   },
   "redirectPreviewCancel": {
     "message": "Abbrechen"
