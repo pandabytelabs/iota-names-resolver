@@ -96,6 +96,8 @@ async function go() {
   }
 
   const payload = res.payload || {};
+  const autoRedirect = !!$("redirect")?.checked;
+
   // Always navigate somewhere visible:
   // - If a website is present and auto-redirect is enabled -> go to website
   // - Otherwise -> open the extension details page
