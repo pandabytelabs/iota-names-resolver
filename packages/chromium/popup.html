@@ -8,7 +8,10 @@
 </head>
 <body>
   <main class="wrap">
-    <h1 data-i18n="popupTitle">IOTA Names Resolver</h1>
+    <header class="topbar">
+      <h1 data-i18n="popupTitle">IOTA Names Resolver</h1>
+      <button id="openOptions" class="icon-btn" type="button" data-i18n-attr='{"title":"settings","aria-label":"settings"}' title="Settings" aria-label="Settings">⚙</button>
+    </header>
 
     <div class="row">
       <input id="name" type="text" data-i18n-attr='{"placeholder":"namePlaceholder"}' placeholder="example.iota" autofocus />
@@ -38,17 +41,13 @@
         <input id="rpcUrl" type="text" spellcheck="false" />
       </div>
 
-      <div class="row3">
-        <button id="saveRpc" class="btn" data-i18n="save">Save</button>
-        <span id="status" class="muted"></span>
+      <div class="row3 row3-actions">
+        <span id="status" class="muted" hidden></span>
+        <button id="saveRpc" class="primary" data-i18n="save">Save</button>
       </div>
     </details>
 
     <pre id="advOut" class="pre" hidden></pre>
-
-    <div class="actions">
-      <a id="opts" href="options.html" target="_blank" rel="noreferrer" data-i18n="settings">Settings</a>
-    </div>
   </main>
 
   <script src="i18n.js"></script>
