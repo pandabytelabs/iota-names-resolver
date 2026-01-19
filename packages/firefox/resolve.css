@@ -6,6 +6,17 @@ h1 { margin: 0; font-size: 22px; }
 .sub { opacity: 0.85; margin-top: 3px; }
 .hdr-actions { display: flex; gap: 10px; align-items: center; }
 .link { opacity: 0.9; text-decoration: none; border: 1px solid rgba(127,127,127,.35); padding: 8px 10px; border-radius: 10px; }
+
+/* Header settings action: match the popup's gear button sizing */
+.hdr-actions .icon-btn {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  line-height: 1;
+  font-size: 18px;
+  border-radius: 10px;
+  text-decoration: none;
+}
 .card { border: 1px solid rgba(127,127,127,.35); border-radius: 12px; padding: 14px; margin: 12px 0; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }

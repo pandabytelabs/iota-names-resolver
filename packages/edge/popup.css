@@ -31,6 +31,9 @@ button {
 button.primary { font-weight:600; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; }
 
 .icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 34px;
   height: 34px;
   padding: 0;
