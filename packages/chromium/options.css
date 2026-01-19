@@ -1,4 +1,4 @@
-:root { color-scheme: light dark; }
+:root { color-scheme: light dark; --accent: rgba(134, 111, 255, 0.95); }
 body { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 0; background-color: Canvas; color: CanvasText; }
 .wrap { max-width: 860px; margin: 0 auto; padding: 24px; }
 h1 { margin: 0 0 8px 0; font-size: 22px; }
@@ -18,6 +18,32 @@ option { background-color: Canvas; color: CanvasText; }
 input[type="checkbox"] { transform: scale(1.1); }
 .hint { margin: 8px 0 0 0; opacity: 0.85; }
 .actions { display: flex; gap: 12px; align-items: center; margin-top: 16px; }
-button { padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(127,127,127,.45); background: transparent; cursor: pointer; }
-button.primary { font-weight: 600; }
+button { padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(127,127,127,.45); background: transparent; cursor: pointer; transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease; }
+button.primary { font-weight: 600; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; }
 .pre { white-space: pre-wrap; border-radius: 12px; padding: 10px; border: 1px solid rgba(127,127,127,.35); min-height: 72px; }
+
+.topbar { display: flex; align-items: center; margin-bottom: 10px; }
+.back { font-weight: 600; }
+
+.actions #status { margin-right: auto; }
+
+button.primary.unsaved {
+  border-color: rgba(59, 130, 246, 0.85);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.14);
+  background-color: rgba(59, 130, 246, 0.04);
+}
+
+button.primary.unsaved:hover {
+  background-color: rgba(59, 130, 246, 0.07);
+}
+
+button.primary.flash-saved {
+  border-color: rgba(46, 204, 113, 0.90);
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.18);
+  background-color: rgba(46, 204, 113, 0.08);
+}
+
+button:not(.unsaved):not(.flash-saved):hover { background-color: rgba(127,127,127,.08); }
+button:not(.unsaved):not(.flash-saved):active { background-color: rgba(127,127,127,.12); }
+
+button:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }

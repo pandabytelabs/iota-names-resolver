@@ -1,4 +1,4 @@
-:root { color-scheme: light dark; }
+:root { color-scheme: light dark; --accent: rgba(134, 111, 255, 0.95); }
 body { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 0; background-color: Canvas; color: CanvasText; }
 .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
 .hdr { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
@@ -6,6 +6,17 @@ h1 { margin: 0; font-size: 22px; }
 .sub { opacity: 0.85; margin-top: 3px; }
 .hdr-actions { display: flex; gap: 10px; align-items: center; }
 .link { opacity: 0.9; text-decoration: none; border: 1px solid rgba(127,127,127,.35); padding: 8px 10px; border-radius: 10px; }
+
+/* Header settings action: match the popup's gear button sizing */
+.hdr-actions .icon-btn {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  line-height: 1;
+  font-size: 18px;
+  border-radius: 10px;
+  text-decoration: none;
+}
 .card { border: 1px solid rgba(127,127,127,.35); border-radius: 12px; padding: 14px; margin: 12px 0; }
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
@@ -85,3 +96,13 @@ button.primary { font-weight: 600; }
 details[open] > .acc-sum::after { content: "▾"; }
 .acc-title { font-size: 16px; font-weight: 700; }
 .acc-body { margin-top: 12px; }
+
+button:hover { background-color: rgba(127,127,127,.08); }
+button:active { background-color: rgba(127,127,127,.12); }
+button:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+
+/* Header settings gear: use accent color and consistent hover */
+#openOptions.icon-btn { color: var(--accent); border-color: rgba(134, 111, 255, 0.35); }
+#openOptions.icon-btn:hover { background-color: rgba(134, 111, 255, 0.10); }
+#openOptions.icon-btn:active { background-color: rgba(134, 111, 255, 0.14); }
+#openOptions.icon-btn svg { width: 18px; height: 18px; display: block; transform: translateY(2px); }

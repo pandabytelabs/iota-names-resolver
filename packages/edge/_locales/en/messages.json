@@ -12,7 +12,7 @@
     "message": "Go"
   },
   "autoRedirect": {
-    "message": "Auto-redirect if a website is set"
+    "message": "Auto-redirect if a website is set (temporary)"
   },
   "advanced": {
     "message": "Advanced"
@@ -135,12 +135,21 @@
     "message": "Cancel"
   },
   "redirectPreviewProceed": {
-    "message": "Continue now"
+    "message": "Pause redirect"
   },
   "redirectPreviewCopy": {
     "message": "Copy URL"
   },
   "namePlaceholder": {
     "message": "example.iota"
+  },
+  "redirectPreviewContinue": {
+    "message": "Continue redirect"
+  },
+  "redirectPreviewPaused": {
+    "message": "Redirect paused"
+  },
+  "back": {
+    "message": "Back"
   }
 }

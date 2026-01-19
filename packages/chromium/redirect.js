@@ -16,6 +16,10 @@
   const proceedBtn = document.getElementById("proceed");
   const copyBtn = document.getElementById("copy");
 
+  const labelPause = chrome.i18n.getMessage("redirectPreviewProceed") || "Pause redirect";
+  const labelContinue = chrome.i18n.getMessage("redirectPreviewContinue") || "Continue redirect";
+  const textPaused = chrome.i18n.getMessage("redirectPreviewPaused") || "Redirect paused";
+
   if (badgeEl && name) badgeEl.textContent = name;
 
   function msgCountdown(seconds) {
@@ -78,7 +82,25 @@
   }
 
   if (cancelBtn) cancelBtn.addEventListener("click", cancel);
-  if (proceedBtn) proceedBtn.addEventListener("click", proceed);
+  if (proceedBtn) {
+    let paused = false;
+    // Ensure initial label is the pause label (i18n applies too, but this keeps JS authoritative).
+    proceedBtn.textContent = labelPause;
+
+    proceedBtn.addEventListener("click", () => {
+      if (!targetUrl) return;
+
+      if (!paused) {
+        paused = true;
+        stopTimer();
+        if (countdownEl) countdownEl.textContent = textPaused;
+        proceedBtn.textContent = labelContinue;
+        return;
+      }
+
+      proceed();
+    });
+  }
 
   if (copyBtn) {
     copyBtn.addEventListener("click", async () => {
