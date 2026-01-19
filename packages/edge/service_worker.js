@@ -143,6 +143,15 @@ function buildDetailsUrl(name, tabId) {
   return u.toString();
 }
 
+function buildRedirectPreviewUrl({ name, tabId, fromUrl, targetUrl }) {
+  const u = new URL(chrome.runtime.getURL("redirect.html"));
+  u.searchParams.set("name", name);
+  u.searchParams.set("target", targetUrl);
+  if (typeof tabId === "number") u.searchParams.set("tabId", String(tabId));
+  if (fromUrl) u.searchParams.set("from", fromUrl);
+  return u.toString();
+}
+
 async function handleNavigation(details) {
   try {
     if (details.frameId !== 0) return;
@@ -151,9 +160,11 @@ async function handleNavigation(details) {
     const url = new URL(details.url);
     if (!(url.protocol === "http:" || url.protocol === "https:")) return;
 
-    // Avoid infinite loop on our internal page.
+    // Avoid infinite loop on our internal pages.
     const internal = new URL(chrome.runtime.getURL("resolve.html"));
-    if (url.origin === internal.origin && url.pathname.endsWith("/resolve.html")) return;
+    if (url.origin === internal.origin) {
+      if (url.pathname.endsWith("/resolve.html") || url.pathname.endsWith("/redirect.html")) return;
+    }
 
     if (!isIotaHost(url.hostname)) return;
 
@@ -184,7 +195,14 @@ async function handleNavigation(details) {
         if (!dest.hash && url.hash) dest.hash = url.hash;
         finalUrl = dest.toString();
       } catch (_) {}
-      await chrome.tabs.update(details.tabId, { url: finalUrl });
+      // Show a short preview of the destination URL so the user can abort.
+      const previewUrl = buildRedirectPreviewUrl({
+        name,
+        tabId: details.tabId,
+        fromUrl: details.url,
+        targetUrl: finalUrl,
+      });
+      await chrome.tabs.update(details.tabId, { url: previewUrl });
       return;
     }
 

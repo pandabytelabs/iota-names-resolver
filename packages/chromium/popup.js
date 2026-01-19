@@ -7,6 +7,13 @@ const DEFAULTS = {
   autoRedirect: false,
 };
 
+function buildRedirectPreviewUrl(name, targetUrl) {
+  const u = new URL(chrome.runtime.getURL("redirect.html"));
+  u.searchParams.set("name", name);
+  u.searchParams.set("target", targetUrl);
+  return u.toString();
+}
+
 function presetRpcUrl(network) {
   if (!network || network === "custom") return null;
   return `https://api.${network}.iota.cafe:443`;
@@ -96,13 +103,14 @@ async function go() {
   // - If a website is present and auto-redirect is enabled -> go to website
   // - Otherwise -> open the extension details page
   const targetUrl = (autoRedirect && payload.websiteUrl)
-    ? payload.websiteUrl
+    ? buildRedirectPreviewUrl(name, payload.websiteUrl)
     : chrome.runtime.getURL(`resolve.html?name=${encodeURIComponent(name)}`);
+
   try {
     // No "tabs" permission needed: omit tabId to target the currently selected tab.
     await chrome.tabs.update({ url: targetUrl });
   } catch (_) {
-    // Fallback: open a new tab if updating the current tab is not possible
+    // Fallback: open a new tab if the current tab cannot be updated.
     await chrome.tabs.create({ url: targetUrl });
   }
   window.close();
