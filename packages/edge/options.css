@@ -1,4 +1,4 @@
-:root { color-scheme: light dark; }
+:root { color-scheme: light dark; --accent: rgba(134, 111, 255, 0.95); }
 body { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 0; background-color: Canvas; color: CanvasText; }
 .wrap { max-width: 860px; margin: 0 auto; padding: 24px; }
 h1 { margin: 0 0 8px 0; font-size: 22px; }
@@ -42,3 +42,8 @@ button.primary.flash-saved {
   box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.18);
   background-color: rgba(46, 204, 113, 0.08);
 }
+
+button:not(.unsaved):not(.flash-saved):hover { background-color: rgba(127,127,127,.08); }
+button:not(.unsaved):not(.flash-saved):active { background-color: rgba(127,127,127,.12); }
+
+button:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }

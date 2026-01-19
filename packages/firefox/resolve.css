@@ -1,4 +1,4 @@
-:root { color-scheme: light dark; }
+:root { color-scheme: light dark; --accent: rgba(134, 111, 255, 0.95); }
 body { font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 0; background-color: Canvas; color: CanvasText; }
 .wrap { max-width: 980px; margin: 0 auto; padding: 18px; }
 .hdr { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
@@ -97,16 +97,12 @@ details[open] > .acc-sum::after { content: "▾"; }
 .acc-title { font-size: 16px; font-weight: 700; }
 .acc-body { margin-top: 12px; }
 
-/* Settings gear button in header */
-#openOptions.icon-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  line-height: 0;
-}
-#openOptions.icon-btn svg {
-  width: 18px;
-  height: 18px;
-  display: block;
-  transform: translateY(1px);
-}
+button:hover { background-color: rgba(127,127,127,.08); }
+button:active { background-color: rgba(127,127,127,.12); }
+button:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+
+/* Header settings gear: use accent color and consistent hover */
+#openOptions.icon-btn { color: var(--accent); border-color: rgba(134, 111, 255, 0.35); }
+#openOptions.icon-btn:hover { background-color: rgba(134, 111, 255, 0.10); }
+#openOptions.icon-btn:active { background-color: rgba(134, 111, 255, 0.14); }
+#openOptions.icon-btn svg { width: 18px; height: 18px; display: block; transform: translateY(2px); }
