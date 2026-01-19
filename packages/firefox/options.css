@@ -23,4 +23,6 @@ button.primary { font-weight: 600; }
 .pre { white-space: pre-wrap; border-radius: 12px; padding: 10px; border: 1px solid rgba(127,127,127,.35); min-height: 72px; }
 
 .topbar { display: flex; align-items: center; margin-bottom: 10px; }
-.back { padding: 6px 10px; border-radius: 999px; font-weight: 600; }
+.back { font-weight: 600; }
+
+.actions #status { margin-right: auto; }
