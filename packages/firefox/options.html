@@ -59,16 +59,15 @@
         <input id="cacheTtlSec" type="number" min="0" step="1" />
       </label>
     </section>
-
     <section class="card">
-      <h2 data-i18n="shortcuts">Shortcuts</h2>
+      <h2 data-i18n="contextMenu">Context menu</h2>
 
       <label class="row">
-        <span data-i18n="enableResolveSelectionShortcut">Enable shortcut: resolve selected text</span>
-        <input id="enableResolveSelectionShortcut" type="checkbox" />
+        <span data-i18n="enableContextMenus">Enable context menu entries (right-click selection)</span>
+        <input id="contextMenusEnabled" type="checkbox" />
       </label>
-      <p class="hint" data-i18n="enableResolveSelectionShortcutHint">
-        Requires optional permissions (activeTab + scripting). If disabled, these permissions will be removed.
+      <p class="hint" data-i18n="enableContextMenusHint">
+        Adds two entries to the right-click menu for selected text.
       </p>
     </section>
 

@@ -62,15 +62,6 @@
   "cacheTtl": {
     "message": "Cache TTL (seconds)"
   },
-  "shortcuts": {
-    "message": "Shortcuts"
-  },
-  "enableResolveSelectionShortcut": {
-    "message": "Enable shortcut: resolve selected text"
-  },
-  "enableResolveSelectionShortcutHint": {
-    "message": "Requires optional permissions (activeTab + scripting). If disabled, these permissions will be removed."
-  },
   "quickTest": {
     "message": "Quick test"
   },
@@ -160,5 +151,20 @@
   },
   "back": {
     "message": "Back"
+  },
+  "contextMenu": {
+    "message": "Context menu"
+  },
+  "enableContextMenus": {
+    "message": "Enable context menu entries (right-click selection)"
+  },
+  "enableContextMenusHint": {
+    "message": "Adds two entries to the right-click menu for selected text."
+  },
+  "ctxResolve": {
+    "message": "Resolve IOTA Name: %s"
+  },
+  "ctxResolveDetails": {
+    "message": "Resolve IOTA Name (Details): %s"
   }
 }

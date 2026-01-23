@@ -62,15 +62,6 @@
   "cacheTtl": {
     "message": "Cache‑TTL (Sekunden)"
   },
-  "shortcuts": {
-    "message": "Shortcuts"
-  },
-  "enableResolveSelectionShortcut": {
-    "message": "Shortcut aktivieren: markierten Text resolven"
-  },
-  "enableResolveSelectionShortcutHint": {
-    "message": "Benötigt optionale Berechtigungen (activeTab + scripting). Wenn deaktiviert, werden diese Berechtigungen entfernt."
-  },
   "quickTest": {
     "message": "Schnelltest"
   },
@@ -160,5 +151,20 @@
   },
   "back": {
     "message": "Zurück"
+  },
+  "contextMenu": {
+    "message": "Kontextmenü"
+  },
+  "enableContextMenus": {
+    "message": "Kontextmenü-Einträge aktivieren (Rechtsklick auf Markierung)"
+  },
+  "enableContextMenusHint": {
+    "message": "Fügt zwei Einträge zum Kontextmenü für markierten Text hinzu."
+  },
+  "ctxResolve": {
+    "message": "IOTA Name resolven: %s"
+  },
+  "ctxResolveDetails": {
+    "message": "IOTA Name resolven (Details): %s"
   }
 }

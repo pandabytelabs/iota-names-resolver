@@ -13,7 +13,8 @@ const DEFAULTS = {
   cacheTtlMs: 5 * 60 * 1000,
   // Optional feature: allow resolving selected text via keyboard shortcut.
   // Requires optional permissions: activeTab + scripting.
-  enableResolveSelectionShortcut: false,
+  // Enable/disable context menu entries.
+  contextMenusEnabled: true,
 };
 
 // --- Per-tab state ---
@@ -178,40 +179,58 @@ function buildRedirectPreviewUrl({ name, tabId, fromUrl, targetUrl }) {
   return u.toString();
 }
 
-// --- Context menu + optional selection shortcut ---
+// --- Context menu helpers ---
 
-// Optional permissions required for the "resolve selection" keyboard shortcut.
-const OPTIONAL_SELECTION_PERMS = { permissions: ["activeTab", "scripting"] };
 
-function selectionToIotaName(text) {
-  let s = (text || "").trim();
+function selectionToIotaName(selectionText) {
+  if (typeof selectionText !== "string") return null;
+  let s = selectionText.trim();
   if (!s) return null;
 
-  // Strip surrounding quotes/brackets/punctuation.
-  s = s
-    .replace(/^[\s"'“”‘’`([{<]+/, "")
-    .replace(/[\s"'“”‘’`)\]}>.,;:!?]+$/, "");
+  // Strip common surrounding punctuation/quotes.
+  const STRIP = /^[\s"'()\[\]{}<>]+|[\s"'()\[\]{}<>.,;:!?…]+$/g;
+  s = s.replace(STRIP, "");
+  if (!s) return null;
 
-  // Support URLs: take hostname.
+  // If it's a URL, extract its hostname.
   try {
-    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) {
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(s)) {
       const u = new URL(s);
-      s = u.hostname;
+      s = u.hostname || "";
     }
   } catch (_) {
     // ignore
   }
 
   // If it's something like "name.iota/path", take the host part.
-  s = s.split(/[\/?#]/)[0];
+  s = s.split(/[\/\?#]/)[0];
   if (!s) return null;
 
   s = s.toLowerCase();
 
-  if (s.endsWith(".iota")) return s;
-  if (s.includes(".")) return null; // avoid converting e.g. example.com
-  if (!/^[a-z0-9-]{1,63}$/i.test(s)) return null;
-  return `${s}.iota`;
+  // Reject userinfo or whitespace.
+  if (/[\s@]/.test(s)) return null;
+
+  // If it's a single label, add .iota; if it already ends with .iota keep it.
+  if (!s.endsWith(".iota")) {
+    if (s.includes(".")) return null; // avoid converting e.g. example.com
+    s = `${s}.iota`;
+  }
+
+  // Basic hostname validation: labels 1..63, allowed chars a-z0-9- (punycode xn-- allowed).
+  if (s.length > 253) return null;
+  if (s.startsWith(".") || s.endsWith(".") || s.includes("..")) return null;
+
+  const labels = s.split(".");
+  if (labels.length < 2 || labels[labels.length - 1] !== "iota") return null;
+
+  const labelRe = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?|xn--[a-z0-9-]{1,59})$/;
+  for (const lab of labels) {
+    if (!lab || lab.length > 63) return null;
+    if (!labelRe.test(lab)) return null;
+  }
+
+  return s;
 }
 
 async function openIotaName(name, { details = false } = {}) {
@@ -228,20 +247,45 @@ async function openIotaName(name, { details = false } = {}) {
   }
 }
 
-function ensureContextMenus() {
+
+
+const CONTEXT_MENU_IDS = {
+  resolve: "inr_resolve",
+  resolveDetails: "inr_resolve_details",
+};
+
+async function syncContextMenus() {
   if (!chrome?.contextMenus?.create) return;
+
+  let enabled = true;
   try {
-    chrome.contextMenus.removeAll(() => {
-      chrome.contextMenus.create({
-        id: "inr_resolve",
-        title: "Resolve IOTA Name: %s",
-        contexts: ["selection"],
-      });
-      chrome.contextMenus.create({
-        id: "inr_resolve_details",
-        title: "Resolve IOTA Name (Details): %s",
-        contexts: ["selection"],
-      });
+    const settings = await getSettings();
+    enabled = settings.contextMenusEnabled !== false;
+  } catch (_) {
+    enabled = true;
+  }
+
+  try {
+    await chrome.contextMenus.removeAll();
+  } catch (_) {
+    // ignore
+  }
+
+  if (!enabled) return;
+
+  const titleResolve = chrome.i18n.getMessage("ctxResolve") || "Resolve IOTA Name: %s";
+  const titleDetails = chrome.i18n.getMessage("ctxResolveDetails") || "Resolve IOTA Name (Details): %s";
+
+  try {
+    chrome.contextMenus.create({
+      id: CONTEXT_MENU_IDS.resolve,
+      title: titleResolve,
+      contexts: ["selection"],
+    });
+    chrome.contextMenus.create({
+      id: CONTEXT_MENU_IDS.resolveDetails,
+      title: titleDetails,
+      contexts: ["selection"],
     });
   } catch (_) {
     // ignore
@@ -249,67 +293,29 @@ function ensureContextMenus() {
 }
 
 if (chrome?.runtime?.onInstalled?.addListener) {
-  chrome.runtime.onInstalled.addListener(() => ensureContextMenus());
+  chrome.runtime.onInstalled.addListener(() => syncContextMenus());
 }
 if (chrome?.runtime?.onStartup?.addListener) {
-  chrome.runtime.onStartup.addListener(() => ensureContextMenus());
+  chrome.runtime.onStartup.addListener(() => syncContextMenus());
+}
+if (chrome?.storage?.onChanged?.addListener) {
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== "sync") return;
+    if (changes && Object.prototype.hasOwnProperty.call(changes, "contextMenusEnabled")) {
+      syncContextMenus();
+    }
+  });
 }
 
 if (chrome?.contextMenus?.onClicked?.addListener) {
   chrome.contextMenus.onClicked.addListener(async (info) => {
     const name = selectionToIotaName(info?.selectionText || "");
     if (!name) return;
-    if (info.menuItemId === "inr_resolve") return openIotaName(name, { details: false });
-    if (info.menuItemId === "inr_resolve_details") return openIotaName(name, { details: true });
+    if (info.menuItemId === CONTEXT_MENU_IDS.resolve) return openIotaName(name, { details: false });
+    if (info.menuItemId === CONTEXT_MENU_IDS.resolveDetails) return openIotaName(name, { details: true });
   });
 }
 
-// Keyboard shortcut: resolve currently selected text (optional permissions).
-if (chrome?.commands?.onCommand?.addListener) {
-  chrome.commands.onCommand.addListener(async (command) => {
-    if (command !== "resolve_selection") return;
-
-    const settings = await getSettings();
-    if (!settings.enableResolveSelectionShortcut) return;
-
-    try {
-      const hasPerms = await chrome.permissions.contains(OPTIONAL_SELECTION_PERMS);
-      if (!hasPerms) {
-        if (chrome.runtime.openOptionsPage) chrome.runtime.openOptionsPage();
-        return;
-      }
-    } catch (_) {
-      return;
-    }
-
-    if (!chrome?.scripting?.executeScript) return;
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    const tabId = tabs?.[0]?.id;
-    if (typeof tabId !== "number") return;
-
-    let selected = "";
-    try {
-      const res = await chrome.scripting.executeScript({
-        target: { tabId },
-        func: () => {
-          try {
-            const sel = window.getSelection ? window.getSelection() : null;
-            return sel ? String(sel) : "";
-          } catch (_) {
-            return "";
-          }
-        },
-      });
-      selected = res?.[0]?.result || "";
-    } catch (_) {
-      return;
-    }
-
-    const name = selectionToIotaName(selected);
-    if (!name) return;
-    await openIotaName(name, { details: false });
-  });
-}
 
 async function handleNavigation(details) {
   try {
