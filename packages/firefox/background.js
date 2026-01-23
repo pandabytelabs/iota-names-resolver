@@ -233,18 +233,70 @@ function selectionToIotaName(selectionText) {
   return s;
 }
 
-async function openIotaName(name, { details = false } = {}) {
-  if (!name) return;
-  const url = details ? `https://${name}/?inr_no_redirect=1` : `https://${name}/`;
+async function openSeededInternalTab(targetUrl, payload) {
+  // Create a tab without navigating to a non-resolvable *.iota host first.
+  // This prevents the browser's DNS error page from flashing.
   try {
-    await chrome.tabs.create({ url });
+    const tab = await chrome.tabs.create({ url: "about:blank" });
+    const tabId = tab?.id;
+    if (typeof tabId === "number" && payload) {
+      try {
+        await (chrome.storage.session || chrome.storage.local).set({ [`last:${tabId}`]: payload });
+      } catch (_) {
+        // ignore
+      }
+    }
+    try {
+      await chrome.tabs.update(tabId, { url: targetUrl });
+    } catch (_) {
+      await chrome.tabs.update({ url: targetUrl });
+    }
+    return tabId;
   } catch (_) {
     try {
-      await chrome.tabs.update({ url });
+      await chrome.tabs.update({ url: targetUrl });
     } catch (_) {
       // ignore
     }
+    return null;
   }
+}
+
+async function openIotaName(name, { details = false } = {}) {
+  if (!name) return;
+
+  // Resolve in the background so we can decide whether a redirect preview is needed,
+  // without ever navigating to https://<name>.iota (which can flash a DNS error page).
+  let settings = null;
+  let record = null;
+  let websiteUrl = null;
+
+  try {
+    settings = await getSettings();
+    record = await resolveIotaName(name);
+    websiteUrl = pickWebsiteUrl(record?.data, settings.websiteKeys);
+  } catch (e) {
+    const detailsUrl = buildDetailsUrl(name);
+    return openSeededInternalTab(detailsUrl, { name, error: String(e?.message || e), resolvedAt: new Date().toISOString() });
+  }
+
+  const payload = { name, record, websiteUrl, resolvedAt: new Date().toISOString() };
+
+  if (details) {
+    const detailsUrl = buildDetailsUrl(name);
+    return openSeededInternalTab(detailsUrl, payload);
+  }
+
+  if (settings?.autoRedirect && websiteUrl) {
+    const previewUrl = buildRedirectPreviewUrl({
+      name,
+      targetUrl: websiteUrl,
+    });
+    return openSeededInternalTab(previewUrl, payload);
+  }
+
+  const detailsUrl = buildDetailsUrl(name);
+  return openSeededInternalTab(detailsUrl, payload);
 }
 
 
