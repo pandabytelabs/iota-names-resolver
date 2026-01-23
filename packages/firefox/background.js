@@ -293,6 +293,106 @@ if (hasOmnibox) {
 
 }
 
+// --- Context menu: resolve selected text as IOTA Name ---
+const CTX_RESOLVE_ID = "inr_ctx_resolve";
+const CTX_DETAILS_ID = "inr_ctx_resolve_details";
+
+function extractIotaNameFromSelection(selectionText) {
+  if (!selectionText || typeof selectionText !== "string") return null;
+
+  let s = selectionText.trim();
+  if (!s) return null;
+
+  // Strip common surrounding punctuation/quotes.
+  s = s
+    .replace(/^[\s"'“”‘’`([{<]+/, "")
+    .replace(/[\s"'“”‘’`\)\]}>.,;:!?]+$/, "");
+
+  // If multiple tokens were selected, use the first one.
+  s = s.split(/\s+/)[0];
+  if (!s) return null;
+
+  let host = s;
+
+  // Attempt URL parsing (with scheme fallback).
+  try {
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(host)) {
+      host = new URL(host).hostname;
+    } else if (/[\/?#]/.test(host) || host.toLowerCase().includes(".iota")) {
+      host = new URL("https://" + host.replace(/^\/+/, "")).hostname;
+    }
+  } catch (_) {
+    // Ignore parse errors and treat as plain hostname/label.
+  }
+
+  host = (host || "").toLowerCase().replace(/\.$/, "");
+  if (!host) return null;
+
+  if (!host.endsWith(".iota")) {
+    if (!/^[a-z0-9.-]+$/i.test(host)) return null;
+    host = host + ".iota";
+  }
+
+  // Basic hostname validation.
+  if (!/^[a-z0-9-]+(\.[a-z0-9-]+)*\.iota$/i.test(host)) return null;
+  return host;
+}
+
+function createContextMenus() {
+  if (!chrome?.contextMenus?.create) return;
+
+  const titleResolve = chrome?.i18n?.getMessage?.("contextResolve") || "Resolve IOTA Name: %s";
+  const titleDetails = chrome?.i18n?.getMessage?.("contextResolveDetails") || "Resolve IOTA Name (Details): %s";
+
+  try {
+    chrome.contextMenus.removeAll(() => {
+      try {
+        chrome.contextMenus.create({
+          id: CTX_RESOLVE_ID,
+          title: titleResolve,
+          contexts: ["selection"],
+        });
+        chrome.contextMenus.create({
+          id: CTX_DETAILS_ID,
+          title: titleDetails,
+          contexts: ["selection"],
+        });
+      } catch (_) {}
+    });
+  } catch (_) {
+    // Fallback if removeAll fails in a given runtime.
+    try {
+      chrome.contextMenus.create({ id: CTX_RESOLVE_ID, title: titleResolve, contexts: ["selection"] });
+      chrome.contextMenus.create({ id: CTX_DETAILS_ID, title: titleDetails, contexts: ["selection"] });
+    } catch (_) {}
+  }
+}
+
+if (chrome?.contextMenus?.onClicked?.addListener) {
+  try { chrome.runtime?.onInstalled?.addListener?.(() => createContextMenus()); } catch (_) {}
+  try { chrome.runtime?.onStartup?.addListener?.(() => createContextMenus()); } catch (_) {}
+
+  // Best effort: (re)create menus when the worker/background spins up.
+  createContextMenus();
+
+  chrome.contextMenus.onClicked.addListener((info) => {
+    try {
+      const id = info?.menuItemId;
+      if (id !== CTX_RESOLVE_ID && id !== CTX_DETAILS_ID) return;
+
+      const name = extractIotaNameFromSelection(info?.selectionText);
+      if (!name) return;
+
+      const u = new URL(`https://${name}/`);
+      if (id === CTX_DETAILS_ID) u.searchParams.set("inr_no_redirect", "1");
+
+      // Open in a new foreground tab so we do not disrupt the current page.
+      chrome.tabs.create({ url: u.toString() });
+    } catch (_) {}
+  });
+}
+
+
 // Messaging API for popup/options/resolve
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   (async () => {

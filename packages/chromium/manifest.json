@@ -5,7 +5,8 @@
   "description": "__MSG_extDescription__",
   "permissions": [
     "storage",
-    "webNavigation"
+    "webNavigation",
+    "contextMenus"
   ],
   "host_permissions": [
     "*://*.iota/*"
@@ -27,5 +28,14 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "default_locale": "en"
+  "default_locale": "en",
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Open IOTA Names Resolver"
+    }
+  }
 }
