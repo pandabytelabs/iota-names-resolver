@@ -151,5 +151,20 @@
   },
   "back": {
     "message": "Zurück"
+  },
+  "contextMenu": {
+    "message": "Kontextmenü"
+  },
+  "enableContextMenus": {
+    "message": "Kontextmenü-Einträge aktivieren (Rechtsklick auf Markierung)"
+  },
+  "enableContextMenusHint": {
+    "message": "Fügt zwei Einträge zum Kontextmenü für markierten Text hinzu."
+  },
+  "ctxResolve": {
+    "message": "IOTA Name resolven: %s"
+  },
+  "ctxResolveDetails": {
+    "message": "IOTA Name resolven (Details): %s"
   }
 }

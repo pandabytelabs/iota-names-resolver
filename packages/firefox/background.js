@@ -11,6 +11,10 @@ const DEFAULTS = {
   websiteKeys: ["website", "url", "web", "homepage", "link"],
   showDetailsWhenNoWebsite: true,
   cacheTtlMs: 5 * 60 * 1000,
+  // Optional feature: allow resolving selected text via keyboard shortcut.
+  // Requires optional permissions: activeTab + scripting.
+  // Enable/disable context menu entries.
+  contextMenusEnabled: true,
 };
 
 // --- Per-tab state ---
@@ -174,6 +178,196 @@ function buildRedirectPreviewUrl({ name, tabId, fromUrl, targetUrl }) {
   if (fromUrl) u.searchParams.set("from", fromUrl);
   return u.toString();
 }
+
+// --- Context menu helpers ---
+
+
+function selectionToIotaName(selectionText) {
+  if (typeof selectionText !== "string") return null;
+  let s = selectionText.trim();
+  if (!s) return null;
+
+  // Strip common surrounding punctuation/quotes.
+  const STRIP = /^[\s"'()\[\]{}<>]+|[\s"'()\[\]{}<>.,;:!?…]+$/g;
+  s = s.replace(STRIP, "");
+  if (!s) return null;
+
+  // If it's a URL, extract its hostname.
+  try {
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(s)) {
+      const u = new URL(s);
+      s = u.hostname || "";
+    }
+  } catch (_) {
+    // ignore
+  }
+
+  // If it's something like "name.iota/path", take the host part.
+  s = s.split(/[\/\?#]/)[0];
+  if (!s) return null;
+
+  s = s.toLowerCase();
+
+  // Reject userinfo or whitespace.
+  if (/[\s@]/.test(s)) return null;
+
+  // If it's a single label, add .iota; if it already ends with .iota keep it.
+  if (!s.endsWith(".iota")) {
+    if (s.includes(".")) return null; // avoid converting e.g. example.com
+    s = `${s}.iota`;
+  }
+
+  // Basic hostname validation: labels 1..63, allowed chars a-z0-9- (punycode xn-- allowed).
+  if (s.length > 253) return null;
+  if (s.startsWith(".") || s.endsWith(".") || s.includes("..")) return null;
+
+  const labels = s.split(".");
+  if (labels.length < 2 || labels[labels.length - 1] !== "iota") return null;
+
+  const labelRe = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?|xn--[a-z0-9-]{1,59})$/;
+  for (const lab of labels) {
+    if (!lab || lab.length > 63) return null;
+    if (!labelRe.test(lab)) return null;
+  }
+
+  return s;
+}
+
+async function openSeededInternalTab(targetUrl, payload) {
+  // Create a tab without navigating to a non-resolvable *.iota host first.
+  // This prevents the browser's DNS error page from flashing.
+  try {
+    const tab = await chrome.tabs.create({ url: "about:blank" });
+    const tabId = tab?.id;
+    if (typeof tabId === "number" && payload) {
+      try {
+        await (chrome.storage.session || chrome.storage.local).set({ [`last:${tabId}`]: payload });
+      } catch (_) {
+        // ignore
+      }
+    }
+    try {
+      await chrome.tabs.update(tabId, { url: targetUrl });
+    } catch (_) {
+      await chrome.tabs.update({ url: targetUrl });
+    }
+    return tabId;
+  } catch (_) {
+    try {
+      await chrome.tabs.update({ url: targetUrl });
+    } catch (_) {
+      // ignore
+    }
+    return null;
+  }
+}
+
+async function openIotaName(name, { details = false } = {}) {
+  if (!name) return;
+
+  // Resolve in the background so we can decide whether a redirect preview is needed,
+  // without ever navigating to https://<name>.iota (which can flash a DNS error page).
+  let settings = null;
+  let record = null;
+  let websiteUrl = null;
+
+  try {
+    settings = await getSettings();
+    record = await resolveIotaName(name);
+    websiteUrl = pickWebsiteUrl(record?.data, settings.websiteKeys);
+  } catch (e) {
+    const detailsUrl = buildDetailsUrl(name);
+    return openSeededInternalTab(detailsUrl, { name, error: String(e?.message || e), resolvedAt: new Date().toISOString() });
+  }
+
+  const payload = { name, record, websiteUrl, resolvedAt: new Date().toISOString() };
+
+  if (details) {
+    const detailsUrl = buildDetailsUrl(name);
+    return openSeededInternalTab(detailsUrl, payload);
+  }
+
+  if (settings?.autoRedirect && websiteUrl) {
+    const previewUrl = buildRedirectPreviewUrl({
+      name,
+      targetUrl: websiteUrl,
+    });
+    return openSeededInternalTab(previewUrl, payload);
+  }
+
+  const detailsUrl = buildDetailsUrl(name);
+  return openSeededInternalTab(detailsUrl, payload);
+}
+
+
+
+const CONTEXT_MENU_IDS = {
+  resolve: "inr_resolve",
+  resolveDetails: "inr_resolve_details",
+};
+
+async function syncContextMenus() {
+  if (!chrome?.contextMenus?.create) return;
+
+  let enabled = true;
+  try {
+    const settings = await getSettings();
+    enabled = settings.contextMenusEnabled !== false;
+  } catch (_) {
+    enabled = true;
+  }
+
+  try {
+    await chrome.contextMenus.removeAll();
+  } catch (_) {
+    // ignore
+  }
+
+  if (!enabled) return;
+
+  const titleResolve = chrome.i18n.getMessage("ctxResolve") || "Resolve IOTA Name: %s";
+  const titleDetails = chrome.i18n.getMessage("ctxResolveDetails") || "Resolve IOTA Name (Details): %s";
+
+  try {
+    chrome.contextMenus.create({
+      id: CONTEXT_MENU_IDS.resolve,
+      title: titleResolve,
+      contexts: ["selection"],
+    });
+    chrome.contextMenus.create({
+      id: CONTEXT_MENU_IDS.resolveDetails,
+      title: titleDetails,
+      contexts: ["selection"],
+    });
+  } catch (_) {
+    // ignore
+  }
+}
+
+if (chrome?.runtime?.onInstalled?.addListener) {
+  chrome.runtime.onInstalled.addListener(() => syncContextMenus());
+}
+if (chrome?.runtime?.onStartup?.addListener) {
+  chrome.runtime.onStartup.addListener(() => syncContextMenus());
+}
+if (chrome?.storage?.onChanged?.addListener) {
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== "sync") return;
+    if (changes && Object.prototype.hasOwnProperty.call(changes, "contextMenusEnabled")) {
+      syncContextMenus();
+    }
+  });
+}
+
+if (chrome?.contextMenus?.onClicked?.addListener) {
+  chrome.contextMenus.onClicked.addListener(async (info) => {
+    const name = selectionToIotaName(info?.selectionText || "");
+    if (!name) return;
+    if (info.menuItemId === CONTEXT_MENU_IDS.resolve) return openIotaName(name, { details: false });
+    if (info.menuItemId === CONTEXT_MENU_IDS.resolveDetails) return openIotaName(name, { details: true });
+  });
+}
+
 
 async function handleNavigation(details) {
   try {

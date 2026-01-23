@@ -7,7 +7,10 @@ const DEFAULTS = {
   websiteKeys: ["website", "url", "web", "homepage", "link"],
   showDetailsWhenNoWebsite: true,
   cacheTtlMs: 5 * 60 * 1000,
+  // Enable/disable context menu entries (right-click selection).
+  contextMenusEnabled: true,
 };
+
 
 const $ = (id) => document.getElementById(id);
 
@@ -129,6 +132,7 @@ function serializeState() {
     showDetailsWhenNoWebsite: $("showDetailsWhenNoWebsite").checked,
     websiteKeys: websiteKeys,
     cacheTtlSec: cacheTtlSec,
+    contextMenusEnabled: $("contextMenusEnabled").checked,
   });
 }
 
@@ -146,6 +150,7 @@ function initUnsavedTracking() {
     "showDetailsWhenNoWebsite",
     "websiteKeys",
     "cacheTtlSec",
+    "contextMenusEnabled",
   ];
 
   const update = () => {
@@ -175,6 +180,9 @@ async function load() {
   $("websiteKeys").value = (stored.websiteKeys || DEFAULTS.websiteKeys).join(",");
   $("cacheTtlSec").value = Math.round((stored.cacheTtlMs ?? DEFAULTS.cacheTtlMs) / 1000);
 
+  const cmBox = $("contextMenusEnabled");
+  if (cmBox) cmBox.checked = stored.contextMenusEnabled !== false;
+
   $("network").addEventListener("change", () => {
     const n = $("network").value;
     if (n !== "custom") applyNetworkPreset(n);
@@ -200,6 +208,7 @@ async function save() {
     showDetailsWhenNoWebsite: $("showDetailsWhenNoWebsite").checked,
     websiteKeys: websiteKeys.length ? websiteKeys : DEFAULTS.websiteKeys,
     cacheTtlMs: Math.max(0, Math.floor(cacheTtlSec * 1000)),
+    contextMenusEnabled: $("contextMenusEnabled").checked,
   };
 
   await chrome.storage.sync.set(payload);

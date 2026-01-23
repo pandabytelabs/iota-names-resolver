@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extName__",
-  "version": "26.1.20.0",
+  "version": "26.1.23.0",
   "description": "__MSG_extDescription__",
   "permissions": [
     "storage",
-    "webNavigation"
+    "webNavigation",
+    "contextMenus"
   ],
   "host_permissions": [
     "*://*.iota/*"
