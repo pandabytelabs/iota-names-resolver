@@ -11,6 +11,9 @@ const DEFAULTS = {
   websiteKeys: ["website", "url", "web", "homepage", "link"],
   showDetailsWhenNoWebsite: true,
   cacheTtlMs: 5 * 60 * 1000,
+  // Optional feature: allow resolving selected text via keyboard shortcut.
+  // Requires optional permissions: activeTab + scripting.
+  enableResolveSelectionShortcut: false,
 };
 
 const cache = new Map(); // key -> {value, expiresAt}
@@ -152,6 +155,143 @@ function buildRedirectPreviewUrl({ name, tabId, fromUrl, targetUrl }) {
   return u.toString();
 }
 
+// --- Context menu + shortcut helpers ---
+const OPTIONAL_SELECTION_PERMS = { permissions: ["activeTab", "scripting"] };
+
+function selectionToIotaName(selectionText) {
+  if (typeof selectionText !== "string") return null;
+  let s = selectionText.trim();
+  if (!s) return null;
+
+  // Trim common surrounding punctuation/quotes.
+  s = s
+    .replace(/^[\s"'“”‘’`([{<]+/, "")
+    .replace(/[\s"'“”‘’`\)\]}>,.;:!?]+$/, "");
+  if (!s) return null;
+
+  // If it looks like a URL, extract the hostname.
+  try {
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) {
+      s = new URL(s).hostname;
+    }
+  } catch (_) {
+    // ignore
+  }
+
+  // If it's something like "name.iota/path", take the host part.
+  s = s.split(/[\/?#]/)[0];
+  if (!s) return null;
+
+  s = s.toLowerCase();
+
+  if (s.endsWith(".iota")) return s;
+  if (s.includes(".")) return null; // avoid converting e.g. example.com
+  if (!/^[a-z0-9-]{1,63}$/i.test(s)) return null;
+  return `${s}.iota`;
+}
+
+async function openIotaName(name, { details = false } = {}) {
+  if (!name) return;
+  const url = details
+    ? `https://${name}/?inr_no_redirect=1`
+    : `https://${name}/`;
+  try {
+    await chrome.tabs.create({ url });
+  } catch (_) {
+    // Fallback: in some contexts create may fail; try update current tab.
+    try {
+      await chrome.tabs.update({ url });
+    } catch (_) {
+      // ignore
+    }
+  }
+}
+
+function ensureContextMenus() {
+  if (!chrome?.contextMenus?.create) return;
+  try {
+    chrome.contextMenus.removeAll(() => {
+      chrome.contextMenus.create({
+        id: "inr_resolve",
+        title: "Resolve IOTA Name: %s",
+        contexts: ["selection"],
+      });
+      chrome.contextMenus.create({
+        id: "inr_resolve_details",
+        title: "Resolve IOTA Name (Details): %s",
+        contexts: ["selection"],
+      });
+    });
+  } catch (_) {
+    // ignore
+  }
+}
+
+if (chrome?.runtime?.onInstalled?.addListener) {
+  chrome.runtime.onInstalled.addListener(() => ensureContextMenus());
+}
+if (chrome?.runtime?.onStartup?.addListener) {
+  chrome.runtime.onStartup.addListener(() => ensureContextMenus());
+}
+
+if (chrome?.contextMenus?.onClicked?.addListener) {
+  chrome.contextMenus.onClicked.addListener(async (info) => {
+    const name = selectionToIotaName(info?.selectionText || "");
+    if (!name) return;
+    if (info.menuItemId === "inr_resolve") return openIotaName(name, { details: false });
+    if (info.menuItemId === "inr_resolve_details") return openIotaName(name, { details: true });
+  });
+}
+
+// Keyboard shortcut: resolve currently selected text (optional permissions).
+if (chrome?.commands?.onCommand?.addListener) {
+  chrome.commands.onCommand.addListener(async (command) => {
+    if (command !== "resolve_selection") return;
+
+    const settings = await getSettings();
+    if (!settings.enableResolveSelectionShortcut) return;
+
+    // Only run if optional permissions are granted.
+    try {
+      const hasPerms = await chrome.permissions.contains(OPTIONAL_SELECTION_PERMS);
+      if (!hasPerms) {
+        // Keep it non-intrusive: direct user to settings.
+        if (chrome.runtime.openOptionsPage) chrome.runtime.openOptionsPage();
+        return;
+      }
+    } catch (_) {
+      return;
+    }
+
+    if (!chrome?.scripting?.executeScript) return;
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tabId = tabs?.[0]?.id;
+    if (typeof tabId !== "number") return;
+
+    let selected = "";
+    try {
+      const res = await chrome.scripting.executeScript({
+        target: { tabId },
+        func: () => {
+          try {
+            const sel = window.getSelection ? window.getSelection() : null;
+            return sel ? String(sel) : "";
+          } catch (_) {
+            return "";
+          }
+        },
+      });
+      selected = res?.[0]?.result || "";
+    } catch (_) {
+      return;
+    }
+
+    const name = selectionToIotaName(selected);
+    if (!name) return;
+    await openIotaName(name, { details: false });
+  });
+}
+
 async function handleNavigation(details) {
   try {
     if (details.frameId !== 0) return;
@@ -269,106 +409,6 @@ if (hasOmnibox) {
   });
 
 }
-
-// --- Context menu: resolve selected text as IOTA Name ---
-const CTX_RESOLVE_ID = "inr_ctx_resolve";
-const CTX_DETAILS_ID = "inr_ctx_resolve_details";
-
-function extractIotaNameFromSelection(selectionText) {
-  if (!selectionText || typeof selectionText !== "string") return null;
-
-  let s = selectionText.trim();
-  if (!s) return null;
-
-  // Strip common surrounding punctuation/quotes.
-  s = s
-    .replace(/^[\s"'“”‘’`([{<]+/, "")
-    .replace(/[\s"'“”‘’`\)\]}>.,;:!?]+$/, "");
-
-  // If multiple tokens were selected, use the first one.
-  s = s.split(/\s+/)[0];
-  if (!s) return null;
-
-  let host = s;
-
-  // Attempt URL parsing (with scheme fallback).
-  try {
-    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(host)) {
-      host = new URL(host).hostname;
-    } else if (/[\/?#]/.test(host) || host.toLowerCase().includes(".iota")) {
-      host = new URL("https://" + host.replace(/^\/+/, "")).hostname;
-    }
-  } catch (_) {
-    // Ignore parse errors and treat as plain hostname/label.
-  }
-
-  host = (host || "").toLowerCase().replace(/\.$/, "");
-  if (!host) return null;
-
-  if (!host.endsWith(".iota")) {
-    if (!/^[a-z0-9.-]+$/i.test(host)) return null;
-    host = host + ".iota";
-  }
-
-  // Basic hostname validation.
-  if (!/^[a-z0-9-]+(\.[a-z0-9-]+)*\.iota$/i.test(host)) return null;
-  return host;
-}
-
-function createContextMenus() {
-  if (!chrome?.contextMenus?.create) return;
-
-  const titleResolve = chrome?.i18n?.getMessage?.("contextResolve") || "Resolve IOTA Name: %s";
-  const titleDetails = chrome?.i18n?.getMessage?.("contextResolveDetails") || "Resolve IOTA Name (Details): %s";
-
-  try {
-    chrome.contextMenus.removeAll(() => {
-      try {
-        chrome.contextMenus.create({
-          id: CTX_RESOLVE_ID,
-          title: titleResolve,
-          contexts: ["selection"],
-        });
-        chrome.contextMenus.create({
-          id: CTX_DETAILS_ID,
-          title: titleDetails,
-          contexts: ["selection"],
-        });
-      } catch (_) {}
-    });
-  } catch (_) {
-    // Fallback if removeAll fails in a given runtime.
-    try {
-      chrome.contextMenus.create({ id: CTX_RESOLVE_ID, title: titleResolve, contexts: ["selection"] });
-      chrome.contextMenus.create({ id: CTX_DETAILS_ID, title: titleDetails, contexts: ["selection"] });
-    } catch (_) {}
-  }
-}
-
-if (chrome?.contextMenus?.onClicked?.addListener) {
-  try { chrome.runtime?.onInstalled?.addListener?.(() => createContextMenus()); } catch (_) {}
-  try { chrome.runtime?.onStartup?.addListener?.(() => createContextMenus()); } catch (_) {}
-
-  // Best effort: (re)create menus when the worker/background spins up.
-  createContextMenus();
-
-  chrome.contextMenus.onClicked.addListener((info) => {
-    try {
-      const id = info?.menuItemId;
-      if (id !== CTX_RESOLVE_ID && id !== CTX_DETAILS_ID) return;
-
-      const name = extractIotaNameFromSelection(info?.selectionText);
-      if (!name) return;
-
-      const u = new URL(`https://${name}/`);
-      if (id === CTX_DETAILS_ID) u.searchParams.set("inr_no_redirect", "1");
-
-      // Open in a new foreground tab so we do not disrupt the current page.
-      chrome.tabs.create({ url: u.toString() });
-    } catch (_) {}
-  });
-}
-
 
 // Messaging API for popup/options/resolve
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {

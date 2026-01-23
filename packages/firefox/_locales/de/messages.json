@@ -1,138 +1,24 @@
 {
-  "advanced": {
-    "message": "Erweitert"
-  },
-  "autoRedirect": {
-    "message": "Auto-Weiterleitung, wenn eine Website gesetzt ist (temporär)"
-  },
-  "autoRedirectLong": {
-    "message": "Automatisch weiterleiten (wenn Website hinterlegt)"
-  },
-  "back": {
-    "message": "Zurück"
-  },
-  "cacheTtl": {
-    "message": "Cache‑TTL (Sekunden)"
-  },
-  "commandOpenResolver": {
-    "message": "IOTA Names Resolver öffnen"
-  },
-  "contextResolve": {
-    "message": "IOTA Name auflösen: %s"
-  },
-  "contextResolveDetails": {
-    "message": "IOTA Name auflösen (Details): %s"
-  },
-  "endpointsHint": {
-    "message": "Endpunkte folgen typischerweise dem Muster https://api.NETWORK.iota.cafe:443 bzw. https://indexer.NETWORK.iota.cafe:443."
-  },
-  "error": {
-    "message": "Fehler"
-  },
-  "expires": {
-    "message": "Expires"
+  "extName": {
+    "message": "IOTA Names Resolver (.iota)"
   },
   "extDescription": {
     "message": "Löst .iota Namen über IOTA JSON-RPC (iotax_iotaNamesLookup) auf, leitet optional auf die hinterlegte Website weiter und zeigt Records an."
   },
-  "extName": {
-    "message": "IOTA Names Resolver (.iota)"
-  },
-  "footerNote": {
-    "message": "Hinweis: Diese Seite ist lokal (Extension). Im Browser kann example.iota ohne Schema als Suche interpretiert werden – nutze https://example.iota/ oder die Omnibox: iota example.iota."
+  "popupTitle": {
+    "message": "IOTA Names Resolver"
   },
   "go": {
     "message": "Los"
   },
-  "namePlaceholder": {
-    "message": "example.iota"
+  "autoRedirect": {
+    "message": "Auto-Weiterleitung, wenn eine Website gesetzt ist (temporär)"
+  },
+  "advanced": {
+    "message": "Erweitert"
   },
   "network": {
     "message": "Netzwerk"
-  },
-  "nftId": {
-    "message": "NFT ID"
-  },
-  "noRecords": {
-    "message": "Keine Records hinterlegt."
-  },
-  "omniboxSuggestion": {
-    "message": "IOTA Name resolven: %s (z.B. example.iota)"
-  },
-  "openWebsite": {
-    "message": "Website öffnen"
-  },
-  "optionsIntro": {
-    "message": "Resolviert *.iota über JSON‑RPC (iotax_iotaNamesLookup)."
-  },
-  "optionsTitle": {
-    "message": "IOTA Names Resolver – Einstellungen"
-  },
-  "overview": {
-    "message": "Übersicht"
-  },
-  "popupTitle": {
-    "message": "IOTA Names Resolver"
-  },
-  "quickTest": {
-    "message": "Schnelltest"
-  },
-  "rawJson": {
-    "message": "Raw JSON"
-  },
-  "records": {
-    "message": "Records (data)"
-  },
-  "redirectPreviewCancel": {
-    "message": "Abbrechen"
-  },
-  "redirectPreviewContinue": {
-    "message": "Weiterleitung fortsetzen"
-  },
-  "redirectPreviewCopy": {
-    "message": "URL kopieren"
-  },
-  "redirectPreviewCountdown": {
-    "message": "Weiterleitung in $COUNT$ s",
-    "placeholders": {
-      "COUNT": {
-        "content": "$1",
-        "example": "5"
-      }
-    }
-  },
-  "redirectPreviewHint": {
-    "message": "Wenn Sie dem Link nicht vertrauen, brechen Sie ab und prüfen Sie die Record-Details."
-  },
-  "redirectPreviewIntro": {
-    "message": "Auto-Weiterleitung ist aktiviert. Bitte prüfen Sie die Ziel-URL, bevor fortgefahren wird."
-  },
-  "redirectPreviewPaused": {
-    "message": "Weiterleitung pausiert"
-  },
-  "redirectPreviewProceed": {
-    "message": "Weiterleitung pausieren"
-  },
-  "redirectPreviewTitle": {
-    "message": "Ziel prüfen"
-  },
-  "resolutionNav": {
-    "message": "Auflösung / Navigation"
-  },
-  "resolve": {
-    "message": "Resolve"
-  },
-  "resolveSubtitle": {
-    "message": "Auflösung über IOTA Names"
-  },
-  "resolveTitleSuffix": {
-    "message": "IOTA Name"
-  },
-  "resolving": {
-    "message": "Resolving…"
-  },
-  "rpcNetwork": {
-    "message": "RPC / Netzwerk"
   },
   "rpcUrl": {
     "message": "RPC URL"
@@ -146,19 +32,133 @@
   "settings": {
     "message": "Einstellungen"
   },
-  "showDetailsNoWebsite": {
-    "message": "Details anzeigen, wenn keine Website"
-  },
-  "targetAddress": {
-    "message": "Target Address"
+  "resolving": {
+    "message": "Resolving…"
   },
   "unknownError": {
     "message": "Unbekannter Fehler"
   },
-  "website": {
-    "message": "Website"
+  "optionsTitle": {
+    "message": "IOTA Names Resolver – Einstellungen"
+  },
+  "optionsIntro": {
+    "message": "Resolviert *.iota über JSON‑RPC (iotax_iotaNamesLookup)."
+  },
+  "rpcNetwork": {
+    "message": "RPC / Netzwerk"
+  },
+  "resolutionNav": {
+    "message": "Auflösung / Navigation"
+  },
+  "autoRedirectLong": {
+    "message": "Automatisch weiterleiten (wenn Website hinterlegt)"
+  },
+  "showDetailsNoWebsite": {
+    "message": "Details anzeigen, wenn keine Website"
   },
   "websiteKeys": {
     "message": "Website‑Keys (Komma‑separiert)"
+  },
+  "cacheTtl": {
+    "message": "Cache‑TTL (Sekunden)"
+  },
+  "shortcuts": {
+    "message": "Shortcuts"
+  },
+  "enableResolveSelectionShortcut": {
+    "message": "Shortcut aktivieren: markierten Text resolven"
+  },
+  "enableResolveSelectionShortcutHint": {
+    "message": "Benötigt optionale Berechtigungen (activeTab + scripting). Wenn deaktiviert, werden diese Berechtigungen entfernt."
+  },
+  "quickTest": {
+    "message": "Schnelltest"
+  },
+  "resolve": {
+    "message": "Resolve"
+  },
+  "endpointsHint": {
+    "message": "Endpunkte folgen typischerweise dem Muster https://api.NETWORK.iota.cafe:443 bzw. https://indexer.NETWORK.iota.cafe:443."
+  },
+  "resolveTitleSuffix": {
+    "message": "IOTA Name"
+  },
+  "resolveSubtitle": {
+    "message": "Auflösung über IOTA Names"
+  },
+  "openWebsite": {
+    "message": "Website öffnen"
+  },
+  "error": {
+    "message": "Fehler"
+  },
+  "overview": {
+    "message": "Übersicht"
+  },
+  "targetAddress": {
+    "message": "Target Address"
+  },
+  "expires": {
+    "message": "Expires"
+  },
+  "nftId": {
+    "message": "NFT ID"
+  },
+  "website": {
+    "message": "Website"
+  },
+  "records": {
+    "message": "Records (data)"
+  },
+  "noRecords": {
+    "message": "Keine Records hinterlegt."
+  },
+  "rawJson": {
+    "message": "Raw JSON"
+  },
+  "footerNote": {
+    "message": "Hinweis: Diese Seite ist lokal (Extension). Im Browser kann example.iota ohne Schema als Suche interpretiert werden – nutze https://example.iota/ oder die Omnibox: iota example.iota."
+  },
+  "omniboxSuggestion": {
+    "message": "IOTA Name resolven: %s (z.B. example.iota)"
+  },
+  "redirectPreviewTitle": {
+    "message": "Ziel prüfen"
+  },
+  "redirectPreviewIntro": {
+    "message": "Auto-Weiterleitung ist aktiviert. Bitte prüfen Sie die Ziel-URL, bevor fortgefahren wird."
+  },
+  "redirectPreviewHint": {
+    "message": "Wenn Sie dem Link nicht vertrauen, brechen Sie ab und prüfen Sie die Record-Details."
+  },
+  "redirectPreviewCountdown": {
+    "message": "Weiterleitung in $COUNT$ s",
+    "placeholders": {
+      "COUNT": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "redirectPreviewCancel": {
+    "message": "Abbrechen"
+  },
+  "redirectPreviewProceed": {
+    "message": "Weiterleitung pausieren"
+  },
+  "redirectPreviewCopy": {
+    "message": "URL kopieren"
+  },
+  "namePlaceholder": {
+    "message": "example.iota"
+  },
+  "redirectPreviewContinue": {
+    "message": "Weiterleitung fortsetzen"
+  },
+  "redirectPreviewPaused": {
+    "message": "Weiterleitung pausiert"
+  },
+  "back": {
+    "message": "Zurück"
   }
 }

@@ -8,6 +8,10 @@
     "webNavigation",
     "contextMenus"
   ],
+  "optional_permissions": [
+    "activeTab",
+    "scripting"
+  ],
   "host_permissions": [
     "*://*.iota/*"
   ],
@@ -19,6 +23,22 @@
     "default_title": "IOTA Names Resolver",
     "default_popup": "popup.html"
   },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Open IOTA Names Resolver"
+    },
+    "resolve_selection": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+R",
+        "mac": "Command+Shift+R"
+      },
+      "description": "Resolve selected IOTA Name"
+    }
+  },
   "omnibox": {
     "keyword": "iota"
   },
@@ -29,14 +49,5 @@
     "128": "icons/icon128.png"
   },
   "default_locale": "en",
-  "minimum_chrome_version": "110",
-  "commands": {
-    "_execute_action": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+Y",
-        "mac": "Command+Shift+Y"
-      },
-      "description": "Open IOTA Names Resolver"
-    }
-  }
+  "minimum_chrome_version": "110"
 }

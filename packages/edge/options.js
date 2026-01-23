@@ -7,7 +7,12 @@ const DEFAULTS = {
   websiteKeys: ["website", "url", "web", "homepage", "link"],
   showDetailsWhenNoWebsite: true,
   cacheTtlMs: 5 * 60 * 1000,
+  // Optional feature: allow resolving selected text via keyboard shortcut.
+  // Requires optional permissions: activeTab + scripting.
+  enableResolveSelectionShortcut: false,
 };
+
+const OPTIONAL_SELECTION_PERMS = { permissions: ["activeTab", "scripting"] };
 
 const $ = (id) => document.getElementById(id);
 
@@ -129,6 +134,7 @@ function serializeState() {
     showDetailsWhenNoWebsite: $("showDetailsWhenNoWebsite").checked,
     websiteKeys: websiteKeys,
     cacheTtlSec: cacheTtlSec,
+    enableResolveSelectionShortcut: $("enableResolveSelectionShortcut")?.checked ?? false,
   });
 }
 
@@ -146,6 +152,7 @@ function initUnsavedTracking() {
     "showDetailsWhenNoWebsite",
     "websiteKeys",
     "cacheTtlSec",
+    "enableResolveSelectionShortcut",
   ];
 
   const update = () => {
@@ -175,6 +182,24 @@ async function load() {
   $("websiteKeys").value = (stored.websiteKeys || DEFAULTS.websiteKeys).join(",");
   $("cacheTtlSec").value = Math.round((stored.cacheTtlMs ?? DEFAULTS.cacheTtlMs) / 1000);
 
+  // Optional: selection shortcut requires additional permissions.
+  const hasPerms = await (async () => {
+    try {
+      return !!(await chrome.permissions.contains(OPTIONAL_SELECTION_PERMS));
+    } catch (_) {
+      return false;
+    }
+  })();
+
+  const enableShortcut = !!stored.enableResolveSelectionShortcut && hasPerms;
+  const shortcutBox = $("enableResolveSelectionShortcut");
+  if (shortcutBox) shortcutBox.checked = enableShortcut;
+
+  // If the setting is on but permissions are missing, normalize to off.
+  if (!!stored.enableResolveSelectionShortcut && !hasPerms) {
+    await chrome.storage.sync.set({ enableResolveSelectionShortcut: false });
+  }
+
   $("network").addEventListener("change", () => {
     const n = $("network").value;
     if (n !== "custom") applyNetworkPreset(n);
@@ -200,7 +225,31 @@ async function save() {
     showDetailsWhenNoWebsite: $("showDetailsWhenNoWebsite").checked,
     websiteKeys: websiteKeys.length ? websiteKeys : DEFAULTS.websiteKeys,
     cacheTtlMs: Math.max(0, Math.floor(cacheTtlSec * 1000)),
+    enableResolveSelectionShortcut: $("enableResolveSelectionShortcut")?.checked ?? false,
   };
+
+  // Handle optional permissions based on the toggle.
+  if (payload.enableResolveSelectionShortcut) {
+    try {
+      const granted = await chrome.permissions.request(OPTIONAL_SELECTION_PERMS);
+      if (!granted) {
+        payload.enableResolveSelectionShortcut = false;
+        const box = $("enableResolveSelectionShortcut");
+        if (box) box.checked = false;
+      }
+    } catch (_) {
+      payload.enableResolveSelectionShortcut = false;
+      const box = $("enableResolveSelectionShortcut");
+      if (box) box.checked = false;
+    }
+  } else {
+    // If disabled, remove the optional permissions so they no longer apply.
+    try {
+      await chrome.permissions.remove(OPTIONAL_SELECTION_PERMS);
+    } catch (_) {
+      // ignore
+    }
+  }
 
   await chrome.storage.sync.set(payload);
 
